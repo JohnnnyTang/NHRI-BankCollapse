@@ -1,0 +1,65 @@
+{
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1,
+        "name": "民主沙右缘段"
+      },
+      "geometry": {
+        "coordinates": [
+          120.552538,
+          32.045926
+        ],
+        "type": "Point"
+      },
+      "id": "26906b4b585778b9d0c49ff90b5b6e43"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 3,
+        "name": "和畅洲左汊进口右缘段"
+      },
+      "geometry": {
+        "coordinates": [
+          119.615331,
+          32.220155
+        ],
+        "type": "Point"
+      },
+      "id": "869eea3e7f20ee539b3d39ca40b3b325"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 2,
+        "name": "栖龙弯道三江口段"
+      },
+      "geometry": {
+        "coordinates": [
+          119.081051,
+          32.234389
+        ],
+        "type": "Point"
+      },
+      "id": "e9f0613bb00a070ac76c1deeb30ed490"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 4,
+        "name": "嘶马弯道杨湾段"
+      },
+      "geometry": {
+        "coordinates": [
+          119.851536,
+          32.29285
+        ],
+        "type": "Point"
+      },
+      "id": "f4c21be5c77dd3feb4e01ed398afcb11"
+    }
+  ],
+  "type": "FeatureCollection"
+}
