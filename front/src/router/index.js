@@ -1,17 +1,25 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import index from '../views/Index.vue'
+import homeView from '../views/HomeView.vue'
+import statisticsView from '../views/StatisticsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      redirect: '/Home'
+      redirect: '/index'
     },
     {
-      path: '/Home',
-      name: 'Home',
-      component: HomeView
+      path: '/index',
+      name: 'index',
+      component: index,
+      children: [
+        {path: '', component: homeView},
+        {path: '/home', name: 'home', component: homeView},
+        {path: '/statistics', name:'statistics', component: statisticsView},
+        {path: '/device', name:'device'}
+      ]
     }
   ]
 })
