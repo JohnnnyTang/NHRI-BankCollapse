@@ -1,13 +1,26 @@
-import MatrixModel from "../models/matrix.model";
+import MatrixModel from "../models/matrix.model.js";
 
 export default class MatrixService {
-    matrixModel = MatrixModel.Create();
+    matrixModel;
 
-    updateMatrix2Local(udpateData) {
+    constructor() {}
 
+    static async CreateFromLocal() {
+        const matrixService = new MatrixService();
+        matrixService.matrixModel = await MatrixModel.CreateFromLocal();
+        if (matrixService.matrixModel == null) {
+            return null;
+        }
+        return matrixService;
     }
 
-    updateWeight2Local(udpateData) {
+    static CreateFromRequest(reqData) {
+        const matrixService = new MatrixService();
+        matrixService.matrixModel = MatrixModel.CreateFromRequest(reqData);
+        return matrixService;
+    }
 
+    update2Local() {
+        return this.matrixModel.update2Local();
     }
 }
