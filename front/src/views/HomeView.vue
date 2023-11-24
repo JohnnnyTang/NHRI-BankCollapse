@@ -3,6 +3,9 @@
   <leftBox v-if="showBox" />
   <rightTopBox />
   <rightBottomBox v-if="showBox" />
+  <el-button class="btn-full-extent" @click="fullExtent">
+    <el-icon class="icon" :size="20"><FullScreen /></el-icon>全图</el-button
+  >
 </template>
 
 <script>
@@ -14,6 +17,7 @@ import rightTopBox from "@/components/rightTopBox.vue";
 import rightBottomBox from "@/components/rightBottomBox.vue";
 
 import { defineComponent, onMounted, ref, watch } from "vue";
+import { FullScreen } from "@element-plus/icons-vue";
 
 export default defineComponent({
   name: "homeView",
@@ -30,9 +34,12 @@ export default defineComponent({
 
 <script setup>
 import { useStore, nameStore } from "@/stores/index.js";
+import AnimatedPoint from "@/utils/shining.js";
 
 const store = useStore();
 const namestore = nameStore();
+
+var map = null;
 
 const viewState = {
   latitude: 31.864162,
@@ -55,6 +62,16 @@ const provideData = () => {
 };
 provide("provideData", provideData);*/
 
+function fullExtent() {
+  map.easeTo({
+    zoom: viewState.zoom,
+    center: [viewState.longitude, viewState.latitude],
+    pitch: viewState.pitch,
+    bearing: viewState.bearing,
+    duration: 2000,
+  });
+}
+
 onMounted(() => {
   axios
     .get("http://localhost:5173/resJsonEx.json", { responseType: "json" })
@@ -66,7 +83,7 @@ onMounted(() => {
       showBox.value = true;
     });
 
-  const map = new mapboxgl.Map({
+  map = new mapboxgl.Map({
     accessToken:
       "pk.eyJ1IjoiZmxpY2tlcjA1NiIsImEiOiJjbGVwZTdoZ3EwNDZyM3NwN21zeXltYmQ0In0.X2048MURPAfoPoDx0OkGQQ",
     container: "map",
@@ -78,15 +95,7 @@ onMounted(() => {
     bearing: viewState.bearing,
   });
 
-  function fullExtent() {
-    map.easeTo({
-      zoom: viewState.zoom,
-      center: [viewState.longitude, viewState.latitude],
-      pitch: viewState.pitch,
-      bearing: viewState.bearing,
-      duration: 2000,
-    });
-  }
+  const animePoint = new AnimatedPoint(map); //动画图层
 
   map.on("load", function () {
     axios
@@ -192,6 +201,8 @@ onMounted(() => {
               });
               if (states.length) {
                 store.currentName = states[0].properties.name;
+              } else {
+                store.currentName = "";
               }
             });
 
@@ -200,6 +211,7 @@ onMounted(() => {
               (newValue, oldValue) => {
                 if (newValue === "") {
                   map.setPaintProperty("pointLayer", "circle-stroke-width", 2);
+                  animePoint.clearPoint();
                 } else {
                   map.setPaintProperty("pointLayer", "circle-stroke-width", [
                     "match", //匹配模式
@@ -210,19 +222,18 @@ onMounted(() => {
                   ]);
 
                   var features = pointJson.features;
+                  //漫游
                   for (var i = 0; i < features.length; i++) {
                     var feature = features[i];
                     if (feature.properties.name === newValue) {
                       var coordinates = feature.geometry.coordinates;
-                      setTimeout(function () {
-                        map.easeTo({
-                          center: coordinates,
-                          zoom: 12.5,
-                          // pitch: 63.1,
-                          // bearing: -9.9,
-                          duration: 1500,
-                        });
+                      map.easeTo({
+                        center: coordinates,
+                        zoom: 12.5,
+                        duration: 1500,
                       });
+
+                      animePoint.drawPoint(feature);
                       break;
                     }
                   }
@@ -243,5 +254,19 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+.btn-full-extent {
+  position: absolute;
+  top: 5%;
+  right: 29%;
+  height: 5vh;
+  width: 6vw;
+  font-size: 14px;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.icon {
+  padding-right: 5px;
 }
 </style>

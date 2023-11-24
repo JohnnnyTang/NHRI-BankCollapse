@@ -4,7 +4,7 @@
       <div id="name">崩岸风险评估结果</div>
       <el-divider />
       <div class="section-list">
-        <el-scrollbar ref="scrollbar">
+        <el-scrollbar ref="scrollbar" always>
           <el-collapse class="collapse" v-model="store.currentName" accordion>
             <el-collapse-item v-for="(value, key, index) in store.configData" :name="key">
               <template #title>
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { defineComponent, onMounted, ref, watch } from "vue";
+import { defineComponent, onMounted, ref, watch, computed } from "vue";
 import calculation from "@/components/calculation.vue";
 
 export default defineComponent({
@@ -50,6 +50,8 @@ export default defineComponent({
 import { useStore } from "@/stores/index.js";
 const store = useStore();
 
+const scrollbar = ref();
+
 const sections = ref(["民主沙右缘段"]);
 const statusColors = ["#0174BC", "#17BC01", "#F18614", "#ED3324"];
 const statusNames = ["稳定", "较稳定", "较不稳定", "不稳定"];
@@ -61,22 +63,24 @@ watch(
   () => store.currentName,
   (newValue, oldValue) => {
     sections.value = [newValue];
+    var index = 0;
+
+    //自动调整scrollbar
+    for (var key in store.configData) {
+      if (key === newValue) {
+        scrollbar.value.setScrollTop(index * 80);
+        break;
+      }
+      index += 1;
+    }
   }
 );
 
-function scrollToTop() {
-  this.$nextTick(() => {
-    let index = this.activeNames[0]; // 获取当前激活的面板的索引
-    let item = this.$refs.collapseItem[index]; // 获取当前激活的面板的元素
-    item.$el.scrollIntoView({ behavior: "smooth", block: "start" }); // 将元素滚动到父元素的顶端
-  });
-}
-
-function updateScrollbar() {
-  this.$nextTick(() => {
-    this.$refs.scrollbar.update();
-  });
-}
+// const activeColor = computed(() => {
+//   return function (key) {
+//     return key === store.currentName ? 'yellow' : 'transparent';
+//   };
+// });
 </script>
 
 <style scoped>
@@ -119,7 +123,7 @@ function updateScrollbar() {
 .section-list {
   position: relative;
   height: 80%;
-  overflow: auto;
+  /* overflow: auto; */
   border: 1px solid #6b6b6b;
   /* border-top: 0; */
 }
@@ -152,4 +156,5 @@ function updateScrollbar() {
   font-weight: bold;
   font-size: 16px;
 }
+
 </style>

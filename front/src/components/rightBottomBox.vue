@@ -14,30 +14,14 @@ export default defineComponent({
 </script>
 
 <script setup>
-const tableData = [
-  {
-    section: "岸段1",
-  },
-  {
-    section: "岸段2",
-  },
-  {
-    section: "岸段3",
-  },
-  {
-    section: "岸段4",
-  },
-  {
-    section: "岸段5",
-  },
-];
+
 </script>
 
 <style scoped>
 .right-bottom-box {
   position: absolute;
   top: 63%;
-  width: 22%;
+  width: 25%;
   right: 2%;
   height: 32%;
 }
