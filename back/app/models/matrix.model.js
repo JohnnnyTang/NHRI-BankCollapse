@@ -7,12 +7,14 @@ const matrixMap = [
     [0, 0, 0, 1], 
 ]
 
-const baseMatrix = [
-    [0, 0, 0, 0], 
-    [0, 0, 0, 0], 
-    [0, 0, 0, 0], 
-    [0, 0, 0, 0],
-]
+const factorMap = {
+    "水动力因子": ["造床流量当量", "流速指标", "水位变幅", "河道二次流"],
+    "河床演变因子": ["滩槽高差", "深泓离岸相对距离", "近岸冲刷", "分流比变化"],
+    "岸坡特征因子": ["抗滑稳定性", "土体组成", "沉降位移", "渗流坡降"],
+    "人类活动因子": ["岸坡防护方量", "近岸采沙", "突加荷载"]
+}
+
+const isEqualOne = (ele) => ele == 1;
 
 function generateMatrix4ABank(bankFactor) {
     let res = {};
@@ -37,7 +39,7 @@ export default class MatrixModel {
 
     constructor() {}
 
-    static async Create() {
+    static async CreateFromLocal() {
         const dataMatrix = new MatrixModel();
         try {
             dataMatrix.jsonObject = await JSON.parse(fs.readFileSync("D:/bankConfig/stableConfig.json", 'utf-8'));
@@ -50,6 +52,13 @@ export default class MatrixModel {
         }
     }
 
+    static CreateFromRequest(reqData) {
+        const dataMatrix = new MatrixModel();
+        dataMatrix.factorMatrix = reqData;
+        dataMatrix.generateJsonObject();
+        return dataMatrix;
+    }
+
     generateMatrix() {
         if(this.jsonObject == {}) {
             return 'No data';
@@ -59,6 +68,34 @@ export default class MatrixModel {
                 this.factorMatrix[bank] = generateMatrix4ABank(this.jsonObject[bank]);
                 console.log(this.factorMatrix[bank]);
             }
+        }
+    }
+
+    generateJsonObject() {
+        for(let name in this.factorMatrix) {
+            this.jsonObject[name] = {};
+            for(let factor in this.factorMatrix[name]) {
+                console.log(factor);
+                if (factor != "weight") {
+                    this.jsonObject[name][factor] = {}
+                    for(let i = 0; i < this.factorMatrix[name][factor]["matrix"].length; i++) {
+                        this.jsonObject[name][factor][factorMap[factor][i]] = this.factorMatrix[name][factor]["matrix"][i].findIndex(isEqualOne);
+                    }
+                    this.jsonObject[name][factor]["权重"] = this.factorMatrix[name][factor]["weight"];
+                }
+            }
+            this.jsonObject[name]["权重"] = this.factorMatrix[name]["weight"];
+        }
+    }
+
+    update2Local() {
+        try{
+            fs.writeFileSync("D:/bankConfig/stableConfig.json", JSON.stringify(this.jsonObject, null, 2), 'utf-8');
+            console.log('Data successfully saved to disk');
+            return null;
+        } catch(err) {
+            console.log('An error has occurred ', err);
+            return err;
         }
     }
 
