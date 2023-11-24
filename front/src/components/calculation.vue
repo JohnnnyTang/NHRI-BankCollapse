@@ -111,12 +111,12 @@
     <el-row style="align-items: center">
       <el-col :span="16" class="bold-text">预警等级：</el-col>
       <el-col :span="2"
-        ><span class="circle" :style="{ color: statusColors[store.status] }"
+        ><span class="circle" :style="{ color: statusColors[store.statuses[props.sectionName]] }"
           >●</span
         ></el-col
       >
       <el-col :span="6" style="text-align: start">
-        {{ riskLevels[store.status] }}
+        {{ riskLevels[store.statuses[props.sectionName]] }}
       </el-col>
     </el-row>
   </div>
@@ -136,12 +136,18 @@ import { useStore, nameStore } from "@/stores/index.js";
 const store = useStore();
 const namestore = nameStore();
 
-const sectionData = ref(store.currentConfig); //如何解除sectionData与仓库的绑定？
+const props = defineProps({
+  sectionName: {
+    type: String,
+  },
+});
+
+const sectionData = ref(store.configData[props.sectionName]); //如何解除sectionData与仓库的绑定？
 
 const cellColor = computed(() => {
   return function (index) {
     let style =
-      index === store.status
+      index === store.statuses[props.sectionName]
         ? { "background-color": "#FEDA72" }
         : { "background-color": "#606060", color: "#fff" };
     return style;
@@ -151,30 +157,15 @@ const cellColor = computed(() => {
 const cellColor2 = computed(() => {
   return function (index) {
     let style =
-      index === store.status
+      index === store.statuses[props.sectionName]
         ? { "background-color": "#C4C4C4" }
         : { "background-color": "#e4e4e4" };
     return style;
   };
 });
-// //切换岸段时重设显示数据
-// namestore.$subscribe((mutation, state) => {
-//   //console.log(store.configData[namestore.currentName]);
-//   sectionData.value = store.configData[namestore.currentName];
-//   reCalc();
-// });
-
-// //切换岸段时重设显示数据
-watch(
-  () => store.currentName,
-  (newValue, oldValue) => {
-    sectionData.value = store.configData[newValue];
-    reCalc();
-  }
-);
 
 const currentFactor = ref(0); //当前主因子
-const stability = ref(store.currentResult);
+const stability = ref(store.results[props.sectionName]);
 
 const riskLevels = ["IV级风险", "Ⅲ级风险", "Ⅱ级风险", "Ⅰ级风险"];
 const statusColors = ["#0081D1", "#15C900", "#F18614", "#ED3324"];
@@ -190,8 +181,8 @@ const subfactors = [
 
 //计算各状态概率
 function reCalc() {
-  store.calc(store.currentName);
-  stability.value = store.currentResult;
+  store.calc(props.sectionName);
+  stability.value = store.results[props.sectionName];
   //evaluate();
 }
 

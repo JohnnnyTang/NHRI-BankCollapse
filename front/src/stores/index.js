@@ -13,16 +13,10 @@ export const useStore = defineStore('config', () => {
   const results = ref({});
   const currentName = ref("")
 
-  const currentConfig = computed(()=>{
-    return configData.value[currentName.value]
-  })
-
-  const currentResult = computed(()=>{
-    return results.value[currentName.value]
-  })
-
-  const status = computed(() => {
-      let stability = results.value[currentName.value];;
+  const statuses = computed(()=>{
+    let statusObj = {}
+    for(var key in results.value) {
+      let stability = results.value[key];
       var maxNumber = stability[0];
       for (var i = 0; i <= stability.length; i++) {
         if (stability[i] >= maxNumber) {
@@ -30,7 +24,9 @@ export const useStore = defineStore('config', () => {
           var index = i;
         }
       }
-      return index;
+      statusObj[key] = index;
+    }
+    return statusObj;
   })
 
   function calc(name) {
@@ -79,7 +75,7 @@ export const useStore = defineStore('config', () => {
     return newVec;
   }
 
-  return { configData, results, currentName, calcAll, calc, multiply, status, currentConfig, currentResult };
+  return { configData, results, currentName, calcAll, calc, multiply, statuses };
 })
 
 export const nameStore = defineStore('name', () => {

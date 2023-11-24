@@ -1,28 +1,33 @@
 <template>
   <el-container class="left-box map-overlay">
     <el-main>
-      <div id="name">{{ store.currentName }}</div>
+      <div id="name">崩岸风险评估结果</div>
       <el-divider />
       <div class="section-list">
-        <el-collapse class="collapse">
-          <el-collapse-item v-for="(item, index) in sections" :name="index">
-            <template #title>
-              <div class="section-name">{{ item }}</div>
-              <el-card class="card">
-                <div class="stability" :style="{ color: statusColors[store.status] }">
-                  {{ statusNames[store.status] }}
-                </div>
-                <div
-                  class="probability"
-                  :style="{ 'background-color': statusColors[store.status] }"
-                >
-                  {{ store.currentResult[store.status] }}
-                </div>
-              </el-card>
-            </template>
-            <calculation />
-          </el-collapse-item>
-        </el-collapse>
+        <el-scrollbar ref="scrollbar">
+          <el-collapse class="collapse" v-model="store.currentName" accordion>
+            <el-collapse-item v-for="(value, key, index) in store.configData" :name="key">
+              <template #title>
+                <div class="section-name">{{ key }}</div>
+                <el-card class="card">
+                  <div
+                    class="stability"
+                    :style="{ color: statusColors[store.statuses[key]] }"
+                  >
+                    {{ statusNames[store.statuses[key]] }}
+                  </div>
+                  <div
+                    class="probability"
+                    :style="{ 'background-color': statusColors[store.statuses[key]] }"
+                  >
+                    {{ store.results[key][store.statuses[key]] }}
+                  </div>
+                </el-card>
+              </template>
+              <calculation :sectionName="key" />
+            </el-collapse-item>
+          </el-collapse>
+        </el-scrollbar>
       </div>
     </el-main>
   </el-container>
@@ -58,6 +63,20 @@ watch(
     sections.value = [newValue];
   }
 );
+
+function scrollToTop() {
+  this.$nextTick(() => {
+    let index = this.activeNames[0]; // 获取当前激活的面板的索引
+    let item = this.$refs.collapseItem[index]; // 获取当前激活的面板的元素
+    item.$el.scrollIntoView({ behavior: "smooth", block: "start" }); // 将元素滚动到父元素的顶端
+  });
+}
+
+function updateScrollbar() {
+  this.$nextTick(() => {
+    this.$refs.scrollbar.update();
+  });
+}
 </script>
 
 <style scoped>
