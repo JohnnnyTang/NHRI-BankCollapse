@@ -2,7 +2,9 @@
   <el-main>
     <div id="title">{{ store.currentName }}</div>
     <div id="content">
-      {{ info[store.currentName] }}
+      <el-scrollbar>
+        {{ info[store.currentName] }}
+      </el-scrollbar>
     </div>
   </el-main>
 </template>
@@ -35,7 +37,7 @@ const info = {
 #title {
   padding: 5px 10px;
   font-family: 思源黑体Bold;
-  color: #333333;
+  color: #d8e0fa;
   text-align: center;
   font-size: 16px;
 }
@@ -45,5 +47,7 @@ const info = {
   padding: 5px 10px;
   text-indent: 26px;
   font-size: 13px;
+
+  height: 25vh;
 }
 </style>

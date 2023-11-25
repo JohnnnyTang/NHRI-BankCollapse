@@ -29,16 +29,17 @@
           v-if="showTable"
           :data="tables"
           style="width: 100%"
-          :cell-style="{ background: '#F1F1F1', borderColor: '#B7B7B7', padding: '1px' }"
+          :cell-style="{ background: '#5B637C', color:'#D8E0FA' ,borderColor: '#B7B7B7', padding: '1px' }"
           :header-cell-style="{
-            background: '#C2C2C2',
-            color: '#474747',
-            borderColor: '#6B6B6B',
+            background: '#333E52',
+            color: '#D8E0FA',
+            borderColor: '#B7B7B7',
             padding: '1px',
           }"
           height="185"
-          class="style-table"
+          class="style-table box-overlay"
           border
+          stripe
         >
           <el-table-column prop="时间" label="时间" width="84" />
           <el-table-column prop="县（市、区）" label="县(市、区)" width="85" />
@@ -129,7 +130,7 @@ onMounted(() => {
 
 #title {
   font-family: 思源黑体Bold;
-  color: #333333;
+  color: #D8E0FA;;
   text-align: center;
   font-size: 18px;
 }

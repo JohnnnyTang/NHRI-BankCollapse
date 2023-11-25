@@ -3,16 +3,16 @@
     <el-main>
       <div id="name">崩岸风险评估结果</div>
       <el-divider />
-      <div class="section-list">
+      <div class="section-list box-overlay">
         <el-scrollbar ref="scrollbar" always>
-          <el-collapse class="collapse" v-model="store.currentName" accordion>
+          <el-collapse class="collapse box-overlay" v-model="store.currentName" accordion>
             <el-collapse-item v-for="(value, key, index) in store.configData" :name="key">
               <template #title>
                 <div class="section-name">{{ key }}</div>
                 <el-card class="card">
                   <div
                     class="stability"
-                    :style="{ color: statusColors[store.statuses[key]] }"
+                    :style="{ color: statusColors[store.statuses[key]], 'background-color':'#D9E2FF'}"
                   >
                     {{ statusNames[store.statuses[key]] }}
                   </div>
@@ -102,14 +102,14 @@ watch(
   font-family: 思源黑体Bold;
   text-align: center;
   font-size: 20px;
-  color: #333333;
+  color: #D8E0FA;
 }
 
 .bold-text {
   padding: 10px 0;
-  font-family: 黑体;
+  font-family: 思源黑体Bold;
   font-size: 15px;
-  font-weight: bold;
+  color: #C0D0FF;
 }
 
 .collapse {
@@ -118,13 +118,14 @@ watch(
   --el-collapse-border-color: #6b6b6b;
   border-top: 0;
   --el-collapse-content-bg-color: transparent;
+  --el-collapse-header-text-color: #C0D0FF
 }
 
 .section-list {
   position: relative;
   height: 80%;
   /* overflow: auto; */
-  border: 1px solid #6b6b6b;
+  /* border: 1px solid #6b6b6b; */
   /* border-top: 0; */
 }
 
@@ -136,6 +137,7 @@ watch(
   line-height: 17px;
   text-align: left;
   width: 60%;
+  color: #C0D0FF
 }
 
 .card {
@@ -157,4 +159,8 @@ watch(
   font-size: 16px;
 }
 
+/* 箭头样式 */
+.el-icon {
+  --color: #e8e8e8
+}
 </style>

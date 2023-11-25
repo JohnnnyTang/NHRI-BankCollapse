@@ -3,7 +3,7 @@
     <el-row class="bold-text">岸坡崩塌概率计算</el-row>
     <el-row>
       <el-col :span="12">
-        <div>选择主因子：</div>
+        选择主因子：
       </el-col>
       <el-col :span="12">
         <el-select v-model="currentFactor" class="m-2" placeholder="Select" size="small">
@@ -18,7 +18,7 @@
     </el-row>
     <el-row>
       <el-col :span="12">
-        <div>主因子权重：</div>
+        主因子权重：
       </el-col>
       <el-col :span="12">
         <el-input-number
@@ -31,9 +31,9 @@
       </el-col>
     </el-row>
     <el-row>
-      <div>各次因子权重：</div>
+      各次因子权重：
     </el-row>
-    <div style="border: 1px solid #6b6b6b; margin: 5px; padding: 5px">
+    <div style="margin: 5px; padding: 5px" class="box-overlay">
       <el-row v-for="(item, index) in sectionData[mainFactors[currentFactor]].weight">
         <el-col :span="12">
           <div>{{ subfactors[currentFactor][index] }}：</div>
@@ -50,7 +50,7 @@
       </el-row>
     </div>
     <el-row>
-      <div>指标权重判断矩阵：</div>
+      指标权重判断矩阵：
     </el-row>
     <div style="margin: 5px; padding: 5px">
       <div
@@ -111,11 +111,13 @@
     <el-row style="align-items: center">
       <el-col :span="16" class="bold-text">预警等级：</el-col>
       <el-col :span="2"
-        ><span class="circle" :style="{ color: statusColors[store.statuses[props.sectionName]] }"
+        ><span
+          class="circle"
+          :style="{ color: statusColors[store.statuses[props.sectionName]] }"
           >●</span
         ></el-col
       >
-      <el-col :span="6" style="text-align: start">
+      <el-col :span="6" style="text-align: start" class="bold-text">
         {{ riskLevels[store.statuses[props.sectionName]] }}
       </el-col>
     </el-row>
@@ -148,8 +150,8 @@ const cellColor = computed(() => {
   return function (index) {
     let style =
       index === store.statuses[props.sectionName]
-        ? { "background-color": "#FEDA72" }
-        : { "background-color": "#606060", color: "#fff" };
+        ? { "background-color": "#F4C367", color: "#14192A" }
+        : { "background-color": "#121C3D", color: "#D8E0FA" };
     return style;
   };
 });
@@ -158,8 +160,8 @@ const cellColor2 = computed(() => {
   return function (index) {
     let style =
       index === store.statuses[props.sectionName]
-        ? { "background-color": "#C4C4C4" }
-        : { "background-color": "#e4e4e4" };
+        ? { "background-color": "#C4C4C4", color: "#5B6270" }
+        : { "background-color": "#DDE6F9", color: "#5B6270" };
     return style;
   };
 });
@@ -204,6 +206,14 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.el-row {
+  color: #C0D0FF;
+}
+
+.el-col {
+  color: #C0D0FF;
+}
+
 .calculation {
   border-top: 1px solid #6b6b6b;
   padding: 10px;
@@ -211,9 +221,9 @@ onMounted(() => {
 
 .bold-text {
   padding: 5px 0;
-  font-family: 黑体;
+  font-family: 思源黑体Bold;
   font-size: 14px;
-  font-weight: bold;
+  color: #C0D0FF;
 }
 
 .el-divider {
@@ -228,7 +238,7 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   border: 1px solid #808080;
-  --el-input-bg-color: transparent;
+  --el-input-bg-color: #DDE6F9;
   --el-input-border-color: transparent;
 }
 

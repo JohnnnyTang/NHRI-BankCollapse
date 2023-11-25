@@ -1,13 +1,18 @@
 <template>
   <el-container class="right-bottom-box map-overlay">
     <el-main>
-      <div v-if="store.currentName != ''"><bankInfo /></div>
-      <div
-        v-show="store.currentDevice != ''"
-        ref="chartDom"
-        style="width: 100%; height: 100%"
-      ></div>
-      <div v-show="store.currentName == '' && store.currentDevice == ''" class="no-data">无数据</div>
+        <div v-if="store.currentName != ''"><bankInfo /></div>
+        <div
+          v-show="store.currentDevice != ''"
+          ref="chartDom"
+          style="width: 100%; height: 100%"
+        ></div>
+        <div
+          v-show="store.currentName == '' && store.currentDevice == ''"
+          class="no-data"
+        >
+          无数据
+        </div>
     </el-main>
   </el-container>
 </template>
@@ -442,7 +447,7 @@ let positionData = {
 
 let option = {
   title: {
-    textStyle: { fontSize: 14 },
+    textStyle: { fontSize: 14, color: "#C0D0FF" },
     x: "center",
     y: "3px",
   },
@@ -520,7 +525,7 @@ let option = {
     ],
     axisLabel: {
       interval: 7,
-      textStyle: { fontSize: 8 },
+      textStyle: { fontSize: 8, color: "#C0D0FF" },
     },
   },
   yAxis: {
@@ -602,6 +607,6 @@ onMounted(() => {
   align-items: center;
   color: #888;
   font-size: 20px;
-  font-family: 思源黑体R
+  font-family: 思源黑体R;
 }
 </style>

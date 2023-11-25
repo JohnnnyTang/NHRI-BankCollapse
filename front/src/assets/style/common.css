@@ -20,11 +20,33 @@ time, mark, audio, video {
 	text-decoration: none;
 }
 
-.map-overlay {
-	background: rgba(243, 243, 243, 0.8);
+/* .map-overlay {
+	background: rgba(13, 21, 44, 0.9);
 	border-radius: 5px;
-
+	box-shadow: 4px 4px 7px rgba(29, 72, 165, 0.548);
 	backdrop-filter: blur(10px);
+}
+
+.box-overlay {
+	background: rgba(13, 21, 44, 0.9);
+	border-radius: 5px;
+	box-shadow: 4px 4px 7px rgba(29, 72, 165, 0.548);
+	backdrop-filter: blur(10px);
+} */
+
+.map-overlay {
+	background: rgba(7, 12, 59, 0.6);
+	border-radius: 5px;
+	box-shadow: 1px 1px 7px rgba(12, 86, 247, 1);
+	backdrop-filter: blur(10px);
+	color: #D8E0FA;
+}
+
+.box-overlay {
+	background: rgba(24, 28, 66, 0.8);
+	border-radius: 5px;
+	box-shadow: inset 0px 0px 20px 2px rgba(47, 81, 114, 0.7);
+	color: #C0D0FF
 }
 
 @font-face {

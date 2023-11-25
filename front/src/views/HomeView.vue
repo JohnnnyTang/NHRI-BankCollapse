@@ -3,7 +3,7 @@
   <leftBox v-if="showBox" />
   <rightTopBox />
   <rightBottomBox v-if="showBox" />
-  <el-button class="btn-full-extent" @click="fullExtent">
+  <el-button class="btn-full-extent map-overlay" @click="fullExtent">
     <el-icon class="icon" :size="20"><FullScreen /></el-icon>全图</el-button
   >
 </template>
@@ -43,7 +43,7 @@ var map = null;
 const viewState = {
   latitude: 31.964162,
   longitude: 120.150697,
-  zoom: 8,
+  zoom: 7,
   pitch: 0,
   bearing: 0,
 };
@@ -228,9 +228,24 @@ onMounted(async () => {
         "text-allow-overlap": true,
       },
       paint: {
-        "text-halo-color": "white",
-        "text-halo-width": 1,
-        "text-halo-blur": 0.5,
+        "text-color": "#ebe5ff",
+        "text-halo-color": "#f0800f",
+        "text-halo-blur": 0.3,
+        "text-halo-width": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          1,
+          0,
+          5,
+          0.2,
+          9,
+          0.1,
+          10,
+          0.5,
+          22,
+          1,
+        ],
       },
     });
 
@@ -247,10 +262,25 @@ onMounted(async () => {
         "text-max-width": 11,
       },
       paint: {
-        "text-halo-color": "white",
-        "text-halo-width": 1,
-        "text-halo-blur": 0.5,
+        "text-color": "#ebe5ff",
+        "text-halo-color": "#f0800f",
+        "text-halo-blur": 0.3,
         "text-opacity": ["step", ["zoom"], 0, 10, 1],
+        "text-halo-width": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          1,
+          0,
+          5,
+          0.2,
+          9,
+          0.1,
+          10,
+          0.5,
+          22,
+          1,
+        ],
       },
     });
 
@@ -269,7 +299,8 @@ onMounted(async () => {
       const states = map.queryRenderedFeatures(event.point, {
         layers: ["deviceLayer"],
       });
-      if (states.length && store.currentName=="") {     //防止同时选取monitor和device图层
+      if (states.length && store.currentName == "") {
+        //防止同时选取monitor和device图层
         store.currentDevice = states[0].properties.name;
         //漫游
         let coordinates = event.lngLat;
@@ -316,11 +347,11 @@ onMounted(async () => {
             3.5,
             2, //未匹配上的颜色
           ]);
-          
+
           var features = pointJson.features;
           for (var i = 0; i < features.length; i++) {
             var feature = features[i];
-            animePoint.drawPoint(feature)
+            animePoint.drawPoint(feature);
             if (feature.properties.name === newValue) {
               var coordinates = feature.geometry.coordinates;
               map.easeTo({
@@ -365,7 +396,10 @@ onMounted(async () => {
   height: 5vh;
   width: 6vw;
   font-size: 14px;
-  background-color: rgba(255, 255, 255, 0.8);
+  background: rgba(7, 12, 59, 0.6);
+  box-shadow: 1px 1px 7px rgba(12, 86, 247, 1);
+	backdrop-filter: blur(10px);
+	color: #D8E0FA;
 }
 
 .icon {
