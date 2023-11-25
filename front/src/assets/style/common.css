@@ -36,3 +36,18 @@ time, mark, audio, video {
 	font-family: 思源黑体N;
 	src: url(../font/SourceHanSansCN-Normal.otf);
 }
+
+@font-face {
+	font-family: 思源黑体M;
+	src: url(../font/SourceHanSansCN-Medium.otf);
+}
+
+@font-face {
+	font-family: 思源黑体L;
+	src: url(../font/SourceHanSansCN-Light.otf);
+}
+
+@font-face {
+	font-family: 思源黑体R;
+	src: url(../font/SourceHanSansCN-Regular.otf);
+}

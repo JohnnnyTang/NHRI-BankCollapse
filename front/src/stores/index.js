@@ -12,6 +12,7 @@ export const useStore = defineStore('config', () => {
   // }
   const results = ref({});
   const currentName = ref("")
+  const currentDevice = ref("")
 
   const statuses = computed(()=>{
     let statusObj = {}
@@ -75,7 +76,7 @@ export const useStore = defineStore('config', () => {
     return newVec;
   }
 
-  return { configData, results, currentName, calcAll, calc, multiply, statuses };
+  return { configData, results, currentName, calcAll, calc, multiply, statuses, currentDevice };
 })
 
 export const nameStore = defineStore('name', () => {

@@ -3,7 +3,6 @@
     <el-main>
       <div id="title">历史崩岸信息</div>
       <el-divider />
-
       <el-input
         v-model="inputContent"
         class="searchinput"
@@ -103,21 +102,23 @@ const tables = computed(() => {
   return tableData;
 });
 
-axios
-  .get("http://localhost:5173/historyInfo.json", { responseType: "json" })
-  .then((res) => {
-    tableData.value = res.data;
-    //configData = data;
-    showTable.value = true;
-  });
+onMounted(() => {
+  axios
+    .get("http://localhost:5173/historyInfo.json", { responseType: "json" })
+    .then((res) => {
+      tableData.value = res.data;
+      //configData = data;
+      showTable.value = true;
+    });
+});
 </script>
 
 <style scoped>
 .right-top-box {
   position: absolute;
-  top: 5%;
-  width: 25%;
-  right: 2%;
+  top: 3%;
+  width: 26%;
+  right: 1%;
   height: 55%;
 }
 
