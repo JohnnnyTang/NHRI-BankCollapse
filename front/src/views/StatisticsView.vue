@@ -1,10 +1,12 @@
 <template>
 </template>
 
-<script>
+<script setup>
 import { defineComponent, onMounted, ref } from "vue";
 
-export default defineComponent({
-  name: "statisticsView",
-})
+
 </script>
+
+<style scoped>
+
+</style>

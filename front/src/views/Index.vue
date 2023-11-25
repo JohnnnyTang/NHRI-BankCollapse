@@ -84,8 +84,8 @@ watchEffect(() => {
 
 .el-header {
   position: relative;
-  height: 60px;
-  background-color: rgb(17, 17, 17);
+  height: 6vh;
+  background-color: rgb(2, 2, 38);
   color: #fff;
   padding: 0;
   margin: 0;
@@ -97,9 +97,16 @@ watchEffect(() => {
   margin: 0;
 }
 
-.nav-item {
+span.nav-item {
   color: white;
   text-decoration: none;
+  font-size: calc(0.6vh + 0.8vw);
+  font-weight: 600;
+  font-family: 'SimHei';
+}
+
+span.nav-item:hover {
+  color: rgb(144, 190, 255);
 }
 
 .active {
