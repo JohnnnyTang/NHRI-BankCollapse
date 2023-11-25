@@ -195,6 +195,19 @@ onMounted(() => {
               }
             });
 
+            map.on('mouseenter', 'lineLayer', () => {
+                map.getCanvas().style.cursor = 'pointer'
+            })
+            map.on('mouseleave', 'lineLayer', () => {
+                map.getCanvas().style.cursor = ''
+            })
+            map.on('mouseenter', 'pointLayer', () => {
+                map.getCanvas().style.cursor = 'pointer'
+            })
+            map.on('mouseleave', 'pointLayer', () => {
+                map.getCanvas().style.cursor = ''
+            })
+
             watch(
               () => store.currentName,
               (newValue, oldValue) => {
