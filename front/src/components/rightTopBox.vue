@@ -36,7 +36,7 @@
             borderColor: '#6B6B6B',
             padding: '1px',
           }"
-          height="174"
+          height="185"
           class="style-table"
           border
         >

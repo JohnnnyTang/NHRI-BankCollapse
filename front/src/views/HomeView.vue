@@ -74,9 +74,9 @@ function fullExtent() {
 onMounted(async () => {
   map = new mapboxgl.Map({
     accessToken:
-      "pk.eyJ1IjoiZmxpY2tlcjA1NiIsImEiOiJjbGVwZTdoZ3EwNDZyM3NwN21zeXltYmQ0In0.X2048MURPAfoPoDx0OkGQQ",
+      "pk.eyJ1Ijoiam9obm55dCIsImEiOiJja2xxNXplNjYwNnhzMm5uYTJtdHVlbTByIn0.f1GfZbFLWjiEayI6hb_Qvg",
     container: "map",
-    style: "mapbox://styles/flicker056/clp2geuv700dz01r6f8rp5b4a",
+    style: "mapbox://styles/johnnyt/clld6armr00f901q0dyqh7452",
     //interactive: false,
     zoom: viewState.zoom,
     center: [viewState.longitude, viewState.latitude],
@@ -265,6 +265,43 @@ onMounted(async () => {
       }
     });
 
+    map.on("click", function (event) {
+      const states = map.queryRenderedFeatures(event.point, {
+        layers: ["deviceLayer"],
+      });
+      if (states.length && store.currentName=="") {     //防止同时选取monitor和device图层
+        store.currentDevice = states[0].properties.name;
+        //漫游
+        let coordinates = event.lngLat;
+        map.easeTo({
+          center: coordinates,
+          zoom: 12.5,
+          duration: 1500,
+        });
+      } else {
+        store.currentDevice = "";
+      }
+    });
+
+    map.on("mouseenter", "lineLayer", () => {
+      map.getCanvas().style.cursor = "pointer";
+    });
+    map.on("mouseleave", "lineLayer", () => {
+      map.getCanvas().style.cursor = "";
+    });
+    map.on("mouseenter", "pointLayer", () => {
+      map.getCanvas().style.cursor = "pointer";
+    });
+    map.on("mouseleave", "pointLayer", () => {
+      map.getCanvas().style.cursor = "";
+    });
+    map.on("mouseenter", "deviceLayer", () => {
+      map.getCanvas().style.cursor = "pointer";
+    });
+    map.on("mouseleave", "deviceLayer", () => {
+      map.getCanvas().style.cursor = "";
+    });
+
     watch(
       () => store.currentName,
       (newValue, oldValue) => {
@@ -279,12 +316,11 @@ onMounted(async () => {
             3.5,
             2, //未匹配上的颜色
           ]);
-
-          store.currentDevice = "";
+          
           var features = pointJson.features;
-          //漫游
           for (var i = 0; i < features.length; i++) {
             var feature = features[i];
+            animePoint.drawPoint(feature)
             if (feature.properties.name === newValue) {
               var coordinates = feature.geometry.coordinates;
               map.easeTo({
@@ -292,8 +328,6 @@ onMounted(async () => {
                 zoom: 12.5,
                 duration: 1500,
               });
-
-              animePoint.drawPoint(feature);
               break;
             }
           }
@@ -301,23 +335,15 @@ onMounted(async () => {
       }
     );
 
-    map.on("click", function (event) {
-      const states = map.queryRenderedFeatures(event.point, {
-        layers: ["deviceLayer"],
-      });
-      if (states.length) {
-        store.currentDevice = states[0].properties.name;
-        //漫游
-        let coordinates = event.lngLat;
-        map.easeTo({
-          center: coordinates,
-          zoom: 12.5,
-          duration: 1500,
-        });
-      } else {
-        store.currentDevice = "";
-      }
-    });
+    // map.addLayer({
+    //   id: "deviceLayer",
+    //   type: "circle",
+    //   source: "devicePoint",
+    //   paint: {
+    //     "circle-color": "#30F100",
+    //     "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 3, 15, 12],
+    //   },
+    // });
   });
 });
 </script>
@@ -334,7 +360,7 @@ onMounted(async () => {
 
 .btn-full-extent {
   position: absolute;
-  top: 5%;
+  top: 3%;
   right: 29%;
   height: 5vh;
   width: 6vw;

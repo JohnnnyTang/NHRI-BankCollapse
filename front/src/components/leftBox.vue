@@ -86,10 +86,10 @@ watch(
 <style scoped>
 .left-box {
   position: absolute;
-  top: 5%;
+  top: 3%;
   width: 25%;
-  left: 2%;
-  height: 90%;
+  left: 1%;
+  height: 95%;
 }
 
 .el-divider {

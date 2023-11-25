@@ -4,6 +4,8 @@ import cors from 'cors';
 // import MatrixModel from "./app/models/matrix.model.js";
 import MatrixService from './app/service/matrix.service.js';
 import MonitorService from './app/service/monitor.service.js';
+import WaterService from './app/service/water.service.js';
+import StationService from './app/service/station.service.js';
 
 const app = express();
 
@@ -23,14 +25,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get("/matrix", async (req, res) => {
     const matrixService = await MatrixService.CreateFromLocal();
     if (matrixService == null) {
-        res.send({
+        res.status(500).send({
             status: 500,
             data: null,
             message: "no data, read file error!"
         });
         return;
     }
-    res.send({
+    res.status(200).send({
         status: 200,
         data: matrixService.matrixModel.factorMatrix,
         message: "success"
@@ -42,13 +44,13 @@ app.post("/matrix", (req, res) => {
     let resStatus = matrixService.update2Local();
     // console.log(resStatus);
     if (resStatus) {
-        res.send({
+        res.status(500).send({
             status: 500,
             message: resStatus
         })
     }
     else {
-        res.send({
+        res.status(200).send({
             status: 200,
             message: "success"
         })
@@ -58,14 +60,14 @@ app.post("/matrix", (req, res) => {
 app.get("/monitor", async (req, res) => {
     const monitorService = await MonitorService.CreateFromLocal();
     if (monitorService == null) {
-        res.send({
+        res.status(500).send({
             status: 500,
             data: null,
             message: "no data, read local file error!"
         });
         return;
     }
-    res.send({
+    res.status(200).send({
         status: 200,
         data: monitorService.monitorModel.geoData,
         message: "success"
@@ -77,17 +79,46 @@ app.post("/monitor", (req, res) => {
     let resStatus = monitorService.update2Local();
     // console.log(resStatus);
     if (resStatus) {
-        res.send({
+        res.status(500).send({
             status: 500,
             message: resStatus
         })
     }
     else {
-        res.send({
+        res.status(200).send({
             status: 200,
             message: "success"
         })
     }
+});
+
+app.get("/waterLevel/:stationPlace/:stationName/:sTime/:eTime", async (req, res) => {
+    const stationPlace = req.params.stationPlace;
+    const stationName = req.params.stationName;
+    const sTime = req.params.sTime;
+    const eTime = req.params.eTime;
+    const waterLevelRes = await WaterService.getWaterLevel(stationPlace, stationName, sTime, eTime);
+    if (waterLevelRes == -1) {
+        res.status(500).send({
+            status: 500,
+            data: null,
+            message: "no data, read file error!"
+        });
+        return;
+    }
+    res.status(200).send({
+        status: 200,
+        data: waterLevelRes.data,
+        message: "success"
+    });
+});
+
+app.get("/stations", async (req, res) => {
+    res.status(200).send({
+        status: 200,
+        data: StationService.getStationGeoJson(),
+        message: "success"
+    });
 });
 
 // 设置监听端口
