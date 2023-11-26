@@ -10,8 +10,11 @@
           class="searchinput"
           placeholder="请输入关键词进行查询"
         >
-          <template #prepend>
-            <el-button :icon="Search" @click="search" style="height: 4vh"/>
+          <template #suffix>
+            <el-icon @click="clear" style="cursor:pointer"><Close /></el-icon>
+          </template>
+          <template #append>
+            <el-button :icon="Search" @click="search" style="height: 4vh" />
           </template>
         </el-input>
         <!-- <span style="margin: 0px 5px 0px 0px">查询时间范围</span>
@@ -30,7 +33,6 @@
           <el-table
             v-if="showTable"
             :data="tables"
-            style="width: 100%"
             :cell-style="{
               background: '#5B637C',
               color: '#D8E0FA',
@@ -66,7 +68,7 @@
 
 <script>
 import { defineComponent, onMounted, ref, computed } from "vue";
-import { Search } from "@element-plus/icons-vue";
+import { Search, Close } from "@element-plus/icons-vue";
 
 export default defineComponent({
   name: "rightTopBox",
@@ -88,6 +90,10 @@ const searchTime = ref({
   endTime: "",
 });
 
+function clear() {
+  inputContent.value = ''
+}
+
 function search() {
   searchContent.value = inputContent.value;
 }
@@ -108,7 +114,7 @@ const tables = computed(() => {
     });
     return t;
   }
-  return tableData;
+  return tabledata;
 });
 
 onMounted(() => {
@@ -150,7 +156,7 @@ onMounted(() => {
 }
 
 .style-table {
-  background-color: #f1f1f1 !important;
-  border: 1px solid #6b6b6b;
+  background-color: transparent !important;
+  width: 100%;
 }
 </style>

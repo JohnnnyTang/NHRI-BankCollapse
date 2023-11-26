@@ -221,7 +221,7 @@ onMounted(async () => {
       layout: {
         "text-field": ["get", "name"],
         "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
-        "text-size": 12,
+        "text-size": ["interpolate", ["linear"], ["zoom"], 2, 0, 5, 10, 10, 15, 22, 45],
         "text-offset": [0, 1.5],
         "text-letter-spacing": 0.1,
         "text-max-width": 11,
@@ -246,6 +246,7 @@ onMounted(async () => {
           22,
           1,
         ],
+        
       },
     });
 
@@ -256,14 +257,15 @@ onMounted(async () => {
       layout: {
         "text-field": ["get", "name"],
         "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
-        "text-size": 10,
+        "text-size": ["interpolate", ["linear"], ["zoom"], 10, 10, 22, 40],
         "text-offset": [0, 1.5],
         "text-letter-spacing": 0.1,
         "text-max-width": 11,
+        "text-allow-overlap": true
       },
       paint: {
         "text-color": "#ebe5ff",
-        "text-halo-color": "#f0800f",
+        "text-halo-color": "#11711E",
         "text-halo-blur": 0.3,
         "text-opacity": ["step", ["zoom"], 0, 10, 1],
         "text-halo-width": [
