@@ -43,7 +43,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-row class="text" style="margin:2vh 0"> 指标权重判断矩阵： </el-row>
+    <el-row class="text" style="margin: 2vh 0"> 指标权重判断矩阵： </el-row>
     <div style="padding: 1vh 1vw">
       <div
         v-for="(row, rowIndex) in sectionData[mainFactors[currentFactor]].matrix"
@@ -185,7 +185,8 @@ function reCalc() {
 function reset() {
   axios.get("http://localhost:8181/matrix", { responseType: "json" }).then((res) => {
     const data = res.data.data;
-    sectionData.value = data[props.sectionName];
+    store.configData[props.sectionName] = data[props.sectionName];
+    sectionData.value = store.configData[props.sectionName]
   });
 }
 
