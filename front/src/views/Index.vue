@@ -109,7 +109,7 @@ span.nav-item:hover {
   color: rgb(144, 190, 255);
 }
 
-.active {
+span.nav-item.active {
   color: rgb(0, 101, 238);
 }
 </style>
