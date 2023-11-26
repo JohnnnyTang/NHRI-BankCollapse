@@ -376,7 +376,7 @@ onMounted(async () => {
           let value = store.statuses[key];
           nameLists[value].push(key);
         }
-        
+
         map.setPaintProperty("pointLayer", "circle-color", [
           "case",
           ["in", ["get", "name"], ["literal", nameLists["0"]]],
@@ -420,11 +420,11 @@ onMounted(async () => {
 
 .btn-full-extent {
   position: absolute;
-  top: 3%;
-  right: 29%;
+  top: 2vh;
+  right: 28vw;
   height: 5vh;
   width: 6vw;
-  font-size: 14px;
+  font-size: calc(0.75vw + 0.75vh);
   background: rgba(7, 12, 59, 0.6);
   box-shadow: 1px 1px 7px rgba(12, 86, 247, 1);
   backdrop-filter: blur(10px);

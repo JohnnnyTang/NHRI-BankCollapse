@@ -1,18 +1,20 @@
 <template>
   <el-container class="right-top-box map-overlay">
     <el-main>
-      <div id="title">历史崩岸信息</div>
-      <el-divider />
-      <el-input
-        v-model="inputContent"
-        class="searchinput"
-        placeholder="请输入关键词进行查询"
-      >
-        <template #prepend>
-          <el-button :icon="Search" @click="search" />
-        </template>
-      </el-input>
-      <!-- <span style="margin: 0px 5px 0px 0px">查询时间范围</span>
+      <el-scrollbar>
+        <div id="title">历史崩岸信息</div>
+        <el-divider />
+        <el-input
+          style="height: 4vh"
+          v-model="inputContent"
+          class="searchinput"
+          placeholder="请输入关键词进行查询"
+        >
+          <template #prepend>
+            <el-button :icon="Search" @click="search" style="height: 4vh"/>
+          </template>
+        </el-input>
+        <!-- <span style="margin: 0px 5px 0px 0px">查询时间范围</span>
       <div class="block">
         <span class="demonstration">Default</span>
         <el-date-picker
@@ -24,34 +26,40 @@
         />
       </div> -->
 
-      <div class="history-info">
-        <el-table
-          v-if="showTable"
-          :data="tables"
-          style="width: 100%"
-          :cell-style="{ background: '#5B637C', color:'#D8E0FA' ,borderColor: '#B7B7B7', padding: '1px' }"
-          :header-cell-style="{
-            background: '#333E52',
-            color: '#D8E0FA',
-            borderColor: '#B7B7B7',
-            padding: '1px',
-          }"
-          height="185"
-          class="style-table box-overlay"
-          border
-          stripe
-        >
-          <el-table-column prop="时间" label="时间" width="84" />
-          <el-table-column prop="县（市、区）" label="县(市、区)" width="85" />
-          <el-table-column prop="崩岸地点" label="崩岸地点" width="70" />
-          <el-table-column prop="崩岸类型" label="崩岸类型" width="70" />
-          <el-table-column prop="所在河段" label="所在河段" width="70" />
-          <el-table-column prop="岸别" label="岸别" width="70" />
-          <el-table-column prop="口门长度（m）" label="口门长度(m)" width="90" />
-          <el-table-column prop="崩窝宽度(m)" label="崩窝宽度(m)" width="90" />
-          <el-table-column prop="宽/深比" label="宽/深比" width="70" />
-        </el-table>
-      </div>
+        <div class="history-info">
+          <el-table
+            v-if="showTable"
+            :data="tables"
+            style="width: 100%"
+            :cell-style="{
+              background: '#5B637C',
+              color: '#D8E0FA',
+              borderColor: '#B7B7B7',
+              padding: '0.1vh 0.1vw',
+            }"
+            :header-cell-style="{
+              background: '#333E52',
+              color: '#D8E0FA',
+              borderColor: '#B7B7B7',
+              padding: '0.1vh 0.1vw',
+            }"
+            height="29vh"
+            class="style-table box-overlay"
+            border
+            stripe
+          >
+            <el-table-column prop="时间" label="时间" width="84" />
+            <el-table-column prop="县（市、区）" label="县(市、区)" width="85" />
+            <el-table-column prop="崩岸地点" label="崩岸地点" width="70" />
+            <el-table-column prop="崩岸类型" label="崩岸类型" width="70" />
+            <el-table-column prop="所在河段" label="所在河段" width="70" />
+            <el-table-column prop="岸别" label="岸别" width="70" />
+            <el-table-column prop="口门长度（m）" label="口门长度(m)" width="90" />
+            <el-table-column prop="崩窝宽度(m)" label="崩窝宽度(m)" width="90" />
+            <el-table-column prop="宽/深比" label="宽/深比" width="70" />
+          </el-table>
+        </div>
+      </el-scrollbar>
     </el-main>
   </el-container>
 </template>
@@ -117,34 +125,27 @@ onMounted(() => {
 <style scoped>
 .right-top-box {
   position: absolute;
-  top: 3%;
-  width: 26%;
-  right: 1%;
-  height: 55%;
+  top: 2vh;
+  width: 26vw;
+  right: 1vw;
+  height: 53vh;
 }
 
 .el-divider {
   border-color: rgb(150, 150, 150);
-  margin: 10px 0;
+  margin: 2vh 0;
 }
 
 #title {
   font-family: 思源黑体Bold;
-  color: #D8E0FA;;
+  color: #d8e0fa;
   text-align: center;
-  font-size: 18px;
-}
-
-.bold-text {
-  padding: 10px 0;
-  font-family: 黑体;
-  font-size: 15px;
-  font-weight: bold;
+  font-size: calc(0.95vw + 0.95vh);
 }
 
 .history-info {
   position: relative;
-  margin: 10px 0;
+  margin: 2vh 0;
   overflow: auto;
 }
 

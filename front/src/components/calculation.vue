@@ -2,8 +2,8 @@
   <div class="calculation">
     <el-row class="bold-text">岸坡崩塌概率计算</el-row>
     <el-row>
-      <el-col :span="12"> 选择主因子： </el-col>
-      <el-col :span="12">
+      <el-col :span="12" class="text"> 选择主因子： </el-col>
+      <el-col :span="12" class="text">
         <el-select v-model="currentFactor" class="m-2" placeholder="Select" size="small">
           <el-option
             v-for="(item, index) in mainFactors"
@@ -15,8 +15,8 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="12"> 主因子权重： </el-col>
-      <el-col :span="12">
+      <el-col :span="12" class="text"> 主因子权重： </el-col>
+      <el-col :span="12" class="text">
         <el-input-number
           v-model="sectionData.weight[currentFactor]"
           :precision="2"
@@ -26,11 +26,11 @@
         />
       </el-col>
     </el-row>
-    <el-row> 各次因子权重： </el-row>
-    <div style="margin: 5px; padding: 5px" class="box-overlay">
+    <el-row class="text"> 各次因子权重： </el-row>
+    <div style="margin: 1vh 0.3vw; padding: 1vh 0.3vw" class="box-overlay">
       <el-row v-for="(item, index) in sectionData[mainFactors[currentFactor]].weight">
-        <el-col :span="12">
-          <div>{{ subfactors[currentFactor][index] }}：</div>
+        <el-col :span="12" class="text">
+          {{ subfactors[currentFactor][index] }}：
         </el-col>
         <el-col :span="12">
           <el-input-number
@@ -43,15 +43,15 @@
         </el-col>
       </el-row>
     </div>
-    <el-row> 指标权重判断矩阵： </el-row>
-    <div style="margin: 5px; padding: 5px">
+    <el-row class="text" style="margin:2vh 0"> 指标权重判断矩阵： </el-row>
+    <div style="padding: 1vh 1vw">
       <div
         v-for="(row, rowIndex) in sectionData[mainFactors[currentFactor]].matrix"
-        style="display: flex; height: 25px"
+        style="display: flex; height: 4.5vh"
       >
         <div
           v-for="(cell, colIndex) in row"
-          style="display: flex; height: 25px; background-color: #e4e4e4"
+          style="display: flex; height: 4.5vh; background-color: #e4e4e4"
         >
           <el-input
             v-model.number="
@@ -67,10 +67,10 @@
         </div>
       </div>
     </div>
-    <el-row justify="center" style="margin: 20px 0">
-      <el-button type="success" @click="reCalc()">重新计算</el-button>
-      <el-button @click="reset()">重置参数</el-button>
-      <el-button type="danger" @click="saveConfig()">保存配置</el-button>
+    <el-row justify="center" style="margin: 4vh 0">
+      <el-button class="btn" type="success" @click="reCalc()">重新计算</el-button>
+      <el-button class="btn" @click="reset()">重置参数</el-button>
+      <el-button class="btn" type="danger" @click="saveConfig()">保存配置</el-button>
     </el-row>
     <el-divider />
     <el-row class="bold-text">计算结果：</el-row>
@@ -128,7 +128,6 @@ export default defineComponent({
 <script setup>
 import { useStore } from "@/stores/index.js";
 import axios from "axios";
-
 
 const store = useStore();
 
@@ -217,6 +216,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.text {
+  margin: 0.5vh 0;
+  font-size: calc(0.65vw + 0.65vh);
+}
+
 .el-row {
   color: #c0d0ff;
 }
@@ -227,19 +231,19 @@ onMounted(() => {
 
 .calculation {
   border-top: 1px solid #6b6b6b;
-  padding: 10px;
+  padding: 1vh 1vw;
 }
 
 .bold-text {
-  padding: 5px 0;
+  padding: 1vh 0;
   font-family: 思源黑体Bold;
-  font-size: 14px;
+  font-size: calc(0.7vw + 0.7vh);
   color: #c0d0ff;
 }
 
 .el-divider {
   border-color: rgb(150, 150, 150);
-  margin: 15px 0;
+  margin: 2vh 0;
 }
 
 .num-input {
@@ -255,24 +259,34 @@ onMounted(() => {
 
 .cell-level {
   display: flex;
-  height: 25px;
+  height: 4vh;
   /* background-color: #606060;
   color: #fff; */
   justify-content: center;
   align-items: center;
   border: 1px solid #6b6b6b;
+  margin: 0;
+  font-size: calc(0.65vw + 0.65vh);
 }
 
 .cell-p {
   display: flex;
-  height: 25px;
+  height: 4vh;
   /* background-color: #e4e4e4; */
   justify-content: center;
   align-items: center;
   border: 1px solid #6b6b6b;
+  margin: 0;
+  font-size: calc(0.65vw + 0.65vh);
+}
+
+.btn {
+  width: 5vw;
+  height: 4vh;
+  font-size: calc(0.6vw + 0.6vh);
 }
 
 .circle {
-  font-size: 22px;
+  font-size: calc(1.2vw + 1.2vh);
 }
 </style>

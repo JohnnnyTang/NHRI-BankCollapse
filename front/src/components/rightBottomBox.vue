@@ -5,7 +5,7 @@
       <div
         v-show="store.currentDevice != ''"
         ref="chartDom"
-        style="width: 100%; height: 100%"
+        style="position:relative; width: 100%; height: 100%"
       ></div>
       <div v-show="store.currentName == '' && store.currentDevice == ''" class="no-data">
         无数据
@@ -588,16 +588,15 @@ onMounted(() => {
 <style scoped>
 .el-main {
   padding: 0px;
-  margin: 5px;
+  margin: 0.5vh 0.2vw;
 }
 
 .right-bottom-box {
   position: absolute;
-  top: 60%;
-  width: 26%;
-  right: 1%;
-  height: 38%;
-  z-index:3
+  top: 57vh;
+  width: 26vw;
+  right: 1vw;
+  height: 35vh;
 }
 
 .no-data {

@@ -35,19 +35,18 @@ const info = {
 
 <style scoped>
 #title {
-  padding: 5px 10px;
+  padding: 1vh 1vw;
   font-family: 思源黑体Bold;
   color: #d8e0fa;
   text-align: center;
-  font-size: 16px;
+  font-size: calc(0.8vw + 0.8vh);
 }
 
 #content {
   font-family: 思源黑体L;
-  padding: 5px 10px;
-  text-indent: 26px;
-  font-size: 13px;
-
-  height: 25vh;
+  padding: 1vh 1vw;
+  text-indent: calc(1.3vw + 1.3vh);
+  font-size: calc(0.65vw + 0.65vh);
+  height: 24vh;
 }
 </style>

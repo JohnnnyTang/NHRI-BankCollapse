@@ -1,7 +1,7 @@
 <template>
   <el-container class="left-box map-overlay">
     <el-main>
-      <div id="name">崩岸风险评估结果</div>
+      <div id="title">崩岸风险评估结果</div>
       <el-divider />
       <div class="section-list box-overlay">
         <el-scrollbar ref="scrollbar" always>
@@ -12,7 +12,10 @@
                 <el-card class="card">
                   <div
                     class="stability"
-                    :style="{ color: statusColors[store.statuses[key]], 'background-color':'#D9E2FF'}"
+                    :style="{
+                      color: statusColors[store.statuses[key]],
+                      'background-color': '#D9E2FF',
+                    }"
                   >
                     {{ statusNames[store.statuses[key]] }}
                   </div>
@@ -86,40 +89,33 @@ watch(
 <style scoped>
 .left-box {
   position: absolute;
-  top: 3%;
-  width: 25%;
-  left: 1%;
-  height: 95%;
-  z-index: 3
+  top: 2vh;
+  width: 25vw;
+  left: 1vw;
+  height: 90vh;
+  z-index: 3;
 }
 
 .el-divider {
   border-color: rgb(150, 150, 150);
-  margin: 15px 0;
+  margin: 3vh 0;
 }
 
-#name {
-  padding: 5px 0;
+#title {
+  padding: 1vh 0;
   font-family: 思源黑体Bold;
   text-align: center;
-  font-size: 20px;
-  color: #D8E0FA;
-}
-
-.bold-text {
-  padding: 10px 0;
-  font-family: 思源黑体Bold;
-  font-size: 15px;
-  color: #C0D0FF;
+  font-size: calc(1.1vw + 1.1vh);
+  color: #d8e0fa;
 }
 
 .collapse {
   --el-collapse-header-bg-color: transparent;
-  --el-collapse-header-height: 80px;
+  --el-collapse-header-height: 14vh;
   --el-collapse-border-color: #6b6b6b;
   border-top: 0;
   --el-collapse-content-bg-color: transparent;
-  --el-collapse-header-text-color: #C0D0FF
+  --el-collapse-header-text-color: #c0d0ff;
 }
 
 .section-list {
@@ -133,35 +129,36 @@ watch(
 .section-name {
   position: relative;
   font-family: 思源黑体N;
-  padding: 10px;
-  font-size: 16px;
-  line-height: 17px;
+  padding: 1vh 0.7vw;
+  font-size: calc(0.85vw + 0.85vh);
+  line-height: 3vh;
   text-align: left;
   width: 60%;
-  color: #C0D0FF
+  color: #c0d0ff;
 }
 
 .card {
   position: relative;
-  line-height: 30px;
-  width: 60px;
-  height: 60px;
+  line-height: 4.5vh;
+  width: 10vh;
+  height: 9vh;
   --el-card-padding: 0;
 }
 
 .stability {
   background-color: #e8e8e8;
   font-weight: bold;
+  font-size: calc(0.7vw + 0.7vh);
 }
 
 .probability {
   color: white;
   font-weight: bold;
-  font-size: 16px;
+  font-size: calc(0.8vw + 0.8vh);
 }
 
 /* 箭头样式 */
 .el-icon {
-  --color: #e8e8e8
+  --color: #e8e8e8;
 }
 </style>
