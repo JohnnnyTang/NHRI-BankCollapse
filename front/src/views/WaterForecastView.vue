@@ -72,10 +72,10 @@ const markerHeight = 80;
 const markerRadius = 10;
 const linearOffset = 25;
 const popupOffsets = {
-  top: [0, markerHeight],
+  top: [0, markerHeight/2],
   "top-left": [0, 0],
   "top-right": [0, 0],
-  bottom: [0, -markerHeight],
+  bottom: [0, -markerHeight/2],
   "bottom-left": [
     linearOffset,
     (markerHeight - markerRadius + linearOffset) * -1,

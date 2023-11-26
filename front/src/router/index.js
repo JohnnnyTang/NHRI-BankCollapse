@@ -3,6 +3,7 @@ import index from '../views/Index.vue'
 import homeView from '../views/HomeView.vue'
 // import statisticsView from '../views/StatisticsView.vue'
 import waterForecastWrapper from '../views/WaterForecastWrapper.vue';
+import deviceViewWrapper from '../views/DeviceViewWrapper.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,7 +19,7 @@ const router = createRouter({
         {path: '', name: 'index', component: homeView},
         {path: '/home', name: 'home', component: homeView},
         {path: '/statistics', name:'statistics', component: waterForecastWrapper},
-        {path: '/device', name:'device'}
+        {path: '/device', name:'device', component: deviceViewWrapper}
       ]
     }
   ]
