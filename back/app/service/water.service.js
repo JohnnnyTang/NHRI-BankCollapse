@@ -22,7 +22,7 @@ export default class WaterService {
     static async getWaterLevel(stationPlace, stationName, sTime, eTime) {
         try {
             const reqStr = waterLevelPrefix + stationPlaceMap[stationPlace] + "/getInfoByStationAndTime/" + stationName + "/" + sTime + "/" + eTime;
-            console.log("requesting...\n", reqStr);
+            // console.log("requesting...\n", reqStr);
             const res = await axiosInstance.get(reqStr);
             return res.data;
         } catch (error) {
