@@ -85,9 +85,9 @@ onMounted(async () => {
   });
 
   await axios
-    .get("http://localhost:5173/resJsonEx.json", { responseType: "json" })
+    .get("http://localhost:8181/matrix", { responseType: "json" })
     .then((res) => {
-      const data = res.data;
+      const data = res.data.data;
       //configData = data;
       store.configData = data;
       store.calcAll();
@@ -340,6 +340,7 @@ onMounted(async () => {
           map.setPaintProperty("pointLayer", "circle-stroke-width", 2);
           animePoint.clearPoint();
         } else {
+          store.currentDevice = "";
           map.setPaintProperty("pointLayer", "circle-stroke-width", [
             "match", //匹配模式
             ["get", "name"], //匹配的属性值名称，id，可以从feature的属性得到
@@ -366,15 +367,43 @@ onMounted(async () => {
       }
     );
 
-    // map.addLayer({
-    //   id: "deviceLayer",
-    //   type: "circle",
-    //   source: "devicePoint",
-    //   paint: {
-    //     "circle-color": "#30F100",
-    //     "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 3, 15, 12],
-    //   },
-    // });
+    //监听状态变化，改变颜色
+    watch(
+      () => store.statuses,
+      (newValue, oldValue) => {
+        nameLists = { 0: [], 1: [], 2: [], 3: [] };
+        for (var key in store.statuses) {
+          let value = store.statuses[key];
+          nameLists[value].push(key);
+        }
+        
+        map.setPaintProperty("pointLayer", "circle-color", [
+          "case",
+          ["in", ["get", "name"], ["literal", nameLists["0"]]],
+          statusColors[0],
+          ["in", ["get", "name"], ["literal", nameLists["1"]]],
+          statusColors[1],
+          ["in", ["get", "name"], ["literal", nameLists["2"]]],
+          statusColors[2],
+          ["in", ["get", "name"], ["literal", nameLists["3"]]],
+          statusColors[3],
+          "#888",
+        ]);
+
+        map.setPaintProperty("lineLayer", "line-color", [
+          "case",
+          ["in", ["get", "name"], ["literal", nameLists["0"]]],
+          statusColors[0],
+          ["in", ["get", "name"], ["literal", nameLists["1"]]],
+          statusColors[1],
+          ["in", ["get", "name"], ["literal", nameLists["2"]]],
+          statusColors[2],
+          ["in", ["get", "name"], ["literal", nameLists["3"]]],
+          statusColors[3],
+          "#888",
+        ]);
+      }
+    );
   });
 });
 </script>
@@ -398,11 +427,15 @@ onMounted(async () => {
   font-size: 14px;
   background: rgba(7, 12, 59, 0.6);
   box-shadow: 1px 1px 7px rgba(12, 86, 247, 1);
-	backdrop-filter: blur(10px);
-	color: #D8E0FA;
+  backdrop-filter: blur(10px);
+  color: #d8e0fa;
 }
 
 .icon {
   padding-right: 5px;
+}
+
+.mapboxgl-ctrl {
+  display: none !important;
 }
 </style>

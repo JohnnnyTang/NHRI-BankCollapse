@@ -34,7 +34,7 @@ export const useStore = defineStore('config', () => {
     let data = configData.value[name];
     let w_fs = data.weight;
 
-    let vec_f1 = multiply(data["水流动力因子"].weight, data["水流动力因子"].matrix);
+    let vec_f1 = multiply(data["水动力因子"].weight, data["水动力因子"].matrix);
     let vec_f2 = multiply(data["河床演变因子"].weight, data["河床演变因子"].matrix);
     let vec_f3 = multiply(data["岸坡特征因子"].weight, data["岸坡特征因子"].matrix);
     let vec_f4 = multiply(data["人类活动因子"].weight, data["人类活动因子"].matrix);
@@ -78,13 +78,3 @@ export const useStore = defineStore('config', () => {
 
   return { configData, results, currentName, calcAll, calc, multiply, statuses, currentDevice };
 })
-
-export const nameStore = defineStore('name', () => {
-  const currentName = ref("");
-
-  const showBox = computed(() => {
-    return currentName.value != ""
-  })
-  return { currentName, showBox };
-})
-

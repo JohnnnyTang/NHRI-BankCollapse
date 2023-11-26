@@ -1,18 +1,15 @@
 <template>
   <el-container class="right-bottom-box map-overlay">
     <el-main>
-        <div v-if="store.currentName != ''"><bankInfo /></div>
-        <div
-          v-show="store.currentDevice != ''"
-          ref="chartDom"
-          style="width: 100%; height: 100%"
-        ></div>
-        <div
-          v-show="store.currentName == '' && store.currentDevice == ''"
-          class="no-data"
-        >
-          无数据
-        </div>
+      <div v-if="store.currentName != ''"><bankInfo /></div>
+      <div
+        v-show="store.currentDevice != ''"
+        ref="chartDom"
+        style="width: 100%; height: 100%"
+      ></div>
+      <div v-show="store.currentName == '' && store.currentDevice == ''" class="no-data">
+        无数据
+      </div>
     </el-main>
   </el-container>
 </template>
@@ -456,6 +453,7 @@ let option = {
   },
   legend: {
     data: ["x方向", "y方向"],
+    textStyle: { color: "#C0D0FF" },
     //orient: 'vertical',
     top: 25,
   },
@@ -541,6 +539,7 @@ let option = {
           return value;
         }
       },
+      textStyle: { color: "#C0D0FF" },
     },
   },
   series: [
@@ -598,6 +597,7 @@ onMounted(() => {
   width: 26%;
   right: 1%;
   height: 38%;
+  z-index:3
 }
 
 .no-data {

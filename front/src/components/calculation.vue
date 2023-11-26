@@ -2,9 +2,7 @@
   <div class="calculation">
     <el-row class="bold-text">岸坡崩塌概率计算</el-row>
     <el-row>
-      <el-col :span="12">
-        选择主因子：
-      </el-col>
+      <el-col :span="12"> 选择主因子： </el-col>
       <el-col :span="12">
         <el-select v-model="currentFactor" class="m-2" placeholder="Select" size="small">
           <el-option
@@ -17,9 +15,7 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="12">
-        主因子权重：
-      </el-col>
+      <el-col :span="12"> 主因子权重： </el-col>
       <el-col :span="12">
         <el-input-number
           v-model="sectionData.weight[currentFactor]"
@@ -30,9 +26,7 @@
         />
       </el-col>
     </el-row>
-    <el-row>
-      各次因子权重：
-    </el-row>
+    <el-row> 各次因子权重： </el-row>
     <div style="margin: 5px; padding: 5px" class="box-overlay">
       <el-row v-for="(item, index) in sectionData[mainFactors[currentFactor]].weight">
         <el-col :span="12">
@@ -49,9 +43,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-row>
-      指标权重判断矩阵：
-    </el-row>
+    <el-row> 指标权重判断矩阵： </el-row>
     <div style="margin: 5px; padding: 5px">
       <div
         v-for="(row, rowIndex) in sectionData[mainFactors[currentFactor]].matrix"
@@ -134,9 +126,11 @@ export default defineComponent({
 </script>
 
 <script setup>
-import { useStore, nameStore } from "@/stores/index.js";
+import { useStore } from "@/stores/index.js";
+import axios from "axios";
+
+
 const store = useStore();
-const namestore = nameStore();
 
 const props = defineProps({
   sectionName: {
@@ -144,7 +138,8 @@ const props = defineProps({
   },
 });
 
-const sectionData = ref(store.configData[props.sectionName]); //如何解除sectionData与仓库的绑定？
+//const sectionData = ref(store.configData[props.sectionName]); //如何解除sectionData与仓库的绑定？
+const sectionData = ref(store.configData[props.sectionName]);
 
 const cellColor = computed(() => {
   return function (index) {
@@ -173,11 +168,11 @@ const riskLevels = ["IV级风险", "Ⅲ级风险", "Ⅱ级风险", "Ⅰ级风险
 const statusColors = ["#0081D1", "#15C900", "#F18614", "#ED3324"];
 //const status = ref(3); //稳定
 
-const mainFactors = ["水流动力因子", "河床演变因子", "岸坡特征因子", "人类活动因子"];
+const mainFactors = ["水动力因子", "河床演变因子", "岸坡特征因子", "人类活动因子"];
 const subfactors = [
   ["造床流量当量", "流速指标", "水位变幅", "河道二次流"],
-  ["滩槽高差", "深泓离岸相对距离", "近岸冲刷", "汊道分流比"],
-  ["岸坡坡比/抗滑稳定性", "土体组成", "沉降位移", "渗流坡降"],
+  ["滩槽高差", "深泓离岸相对距离", "近岸冲刷", "分流比变化"],
+  ["抗滑稳定性", "土体组成", "沉降位移", "渗流坡降"],
   ["岸坡防护方量", "近岸采沙", "突加荷载"],
 ];
 
@@ -189,10 +184,26 @@ function reCalc() {
 }
 
 function reset() {
-  //store.configData[namestore.currentName].$reset;
+  axios.get("http://localhost:8181/matrix", { responseType: "json" }).then((res) => {
+    const data = res.data.data;
+    sectionData.value = data[props.sectionName];
+  });
 }
 
 function saveConfig() {
+  axios.get("http://localhost:8181/matrix", { responseType: "json" }).then((res) => {
+    const data = res.data.data;
+    data[props.sectionName] = sectionData.value;
+    axios
+      .post("http://localhost:8181/matrix", data)
+      .then(function (response) {
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  });
+
   //store.configData[store.currentName] = sectionData;
 }
 
@@ -207,11 +218,11 @@ onMounted(() => {
 
 <style scoped>
 .el-row {
-  color: #C0D0FF;
+  color: #c0d0ff;
 }
 
 .el-col {
-  color: #C0D0FF;
+  color: #c0d0ff;
 }
 
 .calculation {
@@ -223,7 +234,7 @@ onMounted(() => {
   padding: 5px 0;
   font-family: 思源黑体Bold;
   font-size: 14px;
-  color: #C0D0FF;
+  color: #c0d0ff;
 }
 
 .el-divider {
@@ -238,7 +249,7 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   border: 1px solid #808080;
-  --el-input-bg-color: #DDE6F9;
+  --el-input-bg-color: #dde6f9;
   --el-input-border-color: transparent;
 }
 

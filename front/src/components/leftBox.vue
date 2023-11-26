@@ -90,6 +90,7 @@ watch(
   width: 25%;
   left: 1%;
   height: 95%;
+  z-index: 3
 }
 
 .el-divider {
