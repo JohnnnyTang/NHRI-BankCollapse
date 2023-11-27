@@ -16,7 +16,7 @@ const factorMap = {
 
 const isEqualOne = (ele) => ele == 1;
 
-function generateMatrix4ABank(bankFactor) {
+function generateMatrix4APlan(bankFactor) {
     let res = {};
     for(let factorKey in bankFactor) {
         if (factorKey != "权重") {
@@ -30,6 +30,40 @@ function generateMatrix4ABank(bankFactor) {
         }
     }
     res["weight"] = bankFactor["权重"];
+    return res;
+}
+
+function generateMatrix4ABank(bankFactor) {
+    let res = {};
+    for(let planName in bankFactor) {
+        res[planName] = generateMatrix4APlan(bankFactor[planName]);
+    }
+    return res;
+}
+
+function generateJsonObject4APlan(planFactor) {
+    let res = {}
+    for(let factor in planFactor) {
+        console.log(planFactor[factor]);
+        if (factor != "weight") {
+            res[factor] = {}
+            for(let i = 0; i < planFactor[factor]["matrix"].length; i++) {
+                res[factor][factorMap[factor][i]] = planFactor[factor]["matrix"][i].findIndex(isEqualOne);
+            }
+            res[factor]["权重"] = planFactor[factor]["weight"];
+        }
+    }
+    res["权重"] = planFactor["weight"];
+    return res;
+}
+
+function generateJsonObject4ABank(bankFactor) {
+    let res = {};
+    for(let plan in bankFactor) {
+        // console.log("plan: ", plan, bankFactor[plan]);
+        res[plan] = generateJsonObject4APlan(bankFactor[plan]);
+    }
+    // console.log(res)
     return res;
 }
 
@@ -59,6 +93,10 @@ export default class MatrixModel {
         return dataMatrix;
     }
 
+    static GernerateMatrixFromRequest(reqData) {
+        return generateMatrix4APlan(reqData);
+    }
+
     generateMatrix() {
         if(this.jsonObject == {}) {
             return 'No data';
@@ -72,19 +110,21 @@ export default class MatrixModel {
     }
 
     generateJsonObject() {
+        console.log(this.factorMatrix)
         for(let name in this.factorMatrix) {
-            this.jsonObject[name] = {};
-            for(let factor in this.factorMatrix[name]) {
-                console.log(factor);
-                if (factor != "weight") {
-                    this.jsonObject[name][factor] = {}
-                    for(let i = 0; i < this.factorMatrix[name][factor]["matrix"].length; i++) {
-                        this.jsonObject[name][factor][factorMap[factor][i]] = this.factorMatrix[name][factor]["matrix"][i].findIndex(isEqualOne);
-                    }
-                    this.jsonObject[name][factor]["权重"] = this.factorMatrix[name][factor]["weight"];
-                }
-            }
-            this.jsonObject[name]["权重"] = this.factorMatrix[name]["weight"];
+            this.jsonObject[name] = generateJsonObject4ABank(this.factorMatrix[name]);
+            // this.jsonObject[name] = {};
+            // for(let factor in this.factorMatrix[name]) {
+            //     console.log(factor);
+            //     if (factor != "weight") {
+            //         this.jsonObject[name][factor] = {}
+            //         for(let i = 0; i < this.factorMatrix[name][factor]["matrix"].length; i++) {
+            //             this.jsonObject[name][factor][factorMap[factor][i]] = this.factorMatrix[name][factor]["matrix"][i].findIndex(isEqualOne);
+            //         }
+            //         this.jsonObject[name][factor]["权重"] = this.factorMatrix[name][factor]["weight"];
+            //     }
+            // }
+            // this.jsonObject[name]["权重"] = this.factorMatrix[name]["weight"];
         }
     }
 

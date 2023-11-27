@@ -6,7 +6,7 @@
           <el-col :span="9">
             <RouterLink to="/home"
               ><span class="title-item" :class="{ active: curIndex === 1 }"
-                >潮汐河段崩岸监测预警系统</span
+                >岸坡监测数据融合及预警分析系统</span
               >
             </RouterLink></el-col
           >

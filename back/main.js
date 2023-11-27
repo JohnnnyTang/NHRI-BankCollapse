@@ -6,6 +6,7 @@ import MatrixService from './app/service/matrix.service.js';
 import MonitorService from './app/service/monitor.service.js';
 import WaterService from './app/service/water.service.js';
 import StationService from './app/service/station.service.js';
+import MatrixModel from './app/models/matrix.model.js';
 
 const app = express();
 
@@ -119,6 +120,23 @@ app.get("/stations", async (req, res) => {
         data: StationService.getStationGeoJson(),
         message: "success"
     });
+});
+
+app.post("/matrixCalc", (req, res) => {
+    try {
+        const resData = MatrixModel.GernerateMatrixFromRequest(req.body);
+        res.status(200).send({
+            status: 200,
+            data: resData, 
+            message: "success"
+        })
+    } catch(error) {
+        res.status(500).send({
+            status: 500,
+            data: null,
+            message: error
+        })
+    }
 });
 
 // 设置监听端口
