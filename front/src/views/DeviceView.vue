@@ -2,29 +2,40 @@
     <div class="deviceView-container">
         <el-scrollbar>
             <div class="device-card-container">
-                <deviceCard v-for="aFeature in featuresInfo" :feature="aFeature" />
+                <deviceCard v-for="(aFeature, index) in featuresInfo" :feature="aFeature" :index="index" @deleteDevice="deleteADevice"/>
                 <div class="device-add">
                     <div class="add-icon" @click="dialogFormVisible = true">+</div>
                 </div>
             </div>
         </el-scrollbar>
-        <el-dialog v-model="dialogFormVisible" title="Shipping address" center align-center>
-            <el-form :model="form">
-                <el-form-item label="Promotion name" :label-width="formLabelWidth">
-                    <el-input v-model="form.name" autocomplete="off" />
+        <el-dialog v-model="dialogFormVisible" title="新增设备信息" center align-center width="32vw">
+            <el-form :model="device" :inline="true" size="large">
+                <el-form-item label="X坐标" :label-width="formLabelWidth">
+                    <el-input v-model="device.x" autocomplete="off" />
                 </el-form-item>
-                <el-form-item label="Zones" :label-width="formLabelWidth">
-                    <el-select v-model="form.region" placeholder="Please select a zone">
-                        <el-option label="Zone No.1" value="shanghai" />
-                        <el-option label="Zone No.2" value="beijing" />
+                <el-form-item label="Y坐标" :label-width="formLabelWidth">
+                    <el-input v-model="device.y" autocomplete="off" />
+                </el-form-item>
+                <el-form-item label="名称" :label-width="formLabelWidth">
+                    <el-input v-model="device.name" autocomplete="off" />
+                </el-form-item>
+                <el-form-item label="监测类型" :label-width="formLabelWidth">
+                    <el-select v-model="device.type" placeholder="选择类型">
+                        <el-option label="GNSS基站" value="GNSSBase" />
+                        <el-option label="GNSS测量站" value="GNSS" />
+                        <el-option label="压力计" value="压力计" />
+                        <el-option label="应变桩" value="应变桩" />
                     </el-select>
+                </el-form-item>
+                <el-form-item label="岸段" :label-width="formLabelWidth">
+                    <el-input v-model="device.bank" autocomplete="off" />
                 </el-form-item>
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
-                    <el-button @click="dialogFormVisible = false">Cancel</el-button>
-                    <el-button type="primary" @click="dialogFormVisible = false">
-                        Confirm
+                    <el-button @click="dialogFormVisible = false">取消</el-button>
+                    <el-button type="primary" @click="addDevice">
+                        确认
                     </el-button>
                 </span>
             </template>
@@ -46,18 +57,52 @@ featuresInfo.value = res.features;
 console.log(featuresInfo.value);
 
 const dialogFormVisible = ref(false)
-const formLabelWidth = '140px'
+const formLabelWidth = '4vw'
 
-const form = reactive({
-  name: '',
-  region: '',
-  date1: '',
-  date2: '',
-  delivery: false,
-  type: [],
-  resource: '',
-  desc: '',
+const device = reactive({
+    x: '',
+    y: '',
+    name: '',
+    type: '',
+    bank: '',
 })
+
+const addDevice = () => {
+    dialogFormVisible.value = false;
+    console.log(device);
+    featuresInfo.value.push({
+        "type" : "Feature", 
+        "properties" : {  
+            "name" : device.name, 
+            "type" : device.type,
+            "bank" : device.bank,
+            "status": 2
+        }, 
+        "geometry" : { 
+            "type" : "Point", 
+            "coordinates" : [ Number(device.x), Number(device.y) ]
+        }
+    })
+    console.log(featuresInfo.value);
+    axios.post("http://localhost:8181/monitor", 
+        {
+            "type" : "FeatureCollection",
+            "features" :featuresInfo.value
+        }
+    );
+}
+
+const deleteADevice = (deviceIndex) => {
+    console.log("delete device...", deviceIndex);
+    featuresInfo.value.splice(deviceIndex, 1);
+    console.log(featuresInfo.value);
+    axios.post("http://localhost:8181/monitor", 
+        {
+            "type" : "FeatureCollection",
+            "features" :featuresInfo.value
+        }
+    );
+}
 
 onMounted(() => {
 

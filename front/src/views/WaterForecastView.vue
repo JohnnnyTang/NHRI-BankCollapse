@@ -135,19 +135,9 @@ const initStationsLayer = (map) => {
       source: "stations",
       layout: {
         "text-field": ["format", ["get", "name"], { "font-scale": 0.8 }],
-        "text-variable-anchor": ["bottom", "bottom-left", "bottom-right"],
-        "text-radial-offset": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          2,
-          0.5,
-          5,
-          2,
-          10,
-          2,
-          22,
-          4,
+        "text-anchor": "bottom",
+        "text-offset": [
+          0, 3.5
         ],
         "text-size": [
           "interpolate",

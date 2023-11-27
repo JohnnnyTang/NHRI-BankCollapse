@@ -117,6 +117,7 @@ onMounted(async () => {
       .get("http://localhost:8181/monitor", { responseType: "json" })
       .then((res) => {
         deviceJson = res.data.data;
+        console.log("changed json", deviceJson)
       });
 
     let nameLists = { 0: [], 1: [], 2: [], 3: [] };
