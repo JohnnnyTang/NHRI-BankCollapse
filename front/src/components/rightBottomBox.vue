@@ -46,7 +46,6 @@ let option = {
     trigger: "axis",
   },
   legend: {
-    data: ["x方向", "y方向"],
     textStyle: { color: "#C0D0FF" },
     //orient: 'vertical',
     top: 25,
@@ -168,11 +167,39 @@ watch(
     if (newValue) {
       // chartDom.value.style.height = chartDom.value.parentNode.clientHeight + "px";
       // chartDom.value.style.width = chartDom.value.parentNode.clientWidth + "px";
-      option.title.text = newValue + "—48小时点位变化情况";
-      option.series[0].data = positionData[newValue].xPos;
-      option.series[1].data = positionData[newValue].yPos;
+      option.title.text = newValue + "—48小时变化情况";
+      if (positionData[newValue].type === "GNSS") {
+        option.series = [
+          {
+            name: "x方向",
+            type: "line",
+            stack: "Total",
+            showSymbol: false,
+            data: positionData[newValue].xPos,
+          },
+          {
+            name: "y方向",
+            type: "line",
+            stack: "Total",
+            showSymbol: false,
+            data: positionData[newValue].yPos,
+          },
+        ];
+        option.legend.data = ["x方向", "y方向"];
+      } else {
+        option.series = [{}];
+        option.series = [
+          {
+            type: "line",
+            stack: "Total",
+            showSymbol: false,
+            data: positionData[newValue].value,
+          },
+        ];
+        option.legend.data = [];
+      }
       option.yAxis.name = units[positionData[newValue].type];
-      chart.setOption(option);
+      chart.setOption(option, true);
     }
   }
 );
@@ -190,9 +217,12 @@ onMounted(() => {
       positionData[name] = {};
       positionData[name].type = feature.properties.type;
 
-      let variationRange = positionData[name].type === "GNSS" ? 0.5 : 0.02;
-      positionData[name].xPos = randomData(48, variationRange);
-      positionData[name].yPos = randomData(48, variationRange);
+      if (positionData[name].type === "GNSS") {
+        positionData[name].xPos = randomData(48, 0.5);
+        positionData[name].yPos = randomData(48, 0.5);
+      } else {
+        positionData[name].value = randomData(48, 0.02);
+      }
     }
     console.log(positionData);
   });

@@ -29,7 +29,7 @@ import axios from 'axios';
 
 
 const getWaterLevelByStationAndTime = async (stationType, stationName, ysdTime, curTime) => {
-    console.log(`http://localhost:8181/waterLevel/${stationType}/${stationName}/${ysdTime}/${curTime}`)
+    // console.log(`http://localhost:8181/waterLevel/${stationType}/${stationName}/${ysdTime}/${curTime}`)
     const res = await axios.get(`http://localhost:8181/waterLevel/${stationType}/${stationName}/${ysdTime}/${curTime}`);
     return res.data;
 }
@@ -53,7 +53,7 @@ const props = defineProps([
     "chartWidth",
     "chartHeight"
 ]);
-console.log("props", props)
+// console.log("props", props)
 
 const ifShow = toRef(props, 'show')
 // console.log('chart props', props);
@@ -88,7 +88,7 @@ logText += (props.ysdTime + "——" + props.curTime + "\n");
 // console.log(logText)
 const visualMapColors = [['#6F04D9', '#05C7F2'], ['#F24638', '#F3A950']]
 const buildData2ChartOption = (reqData, dataKeys) => {
-    console.log("buildData2ChartOption", reqData)
+    // console.log("buildData2ChartOption", reqData)
     const dataSeries = [];
     const seriesData = {};
     let minMax = {};
@@ -201,7 +201,7 @@ const buildData2ChartOption = (reqData, dataKeys) => {
                 fontSize: 12,
                 fontWeight: 'bold',
                 color: 'rgba(0, 29, 91, 0.9)',
-                formatter: '{hh}:{mm}'
+                formatter: '{dd}日{HH}时'
             },
             minInterval: 3600 * 1000 * 3,
             min: (value) => {
@@ -281,12 +281,12 @@ const toggleChartStatus = () => {
         // console.log("init");
         // chartInited = true;
         chartShown.value = true;
-        console.log("print chart dom");
-        console.log(chartDom.value.clientWidth, chartDom.value.clientHeight);
+        // console.log("print chart dom");
+        // console.log(chartDom.value.clientWidth, chartDom.value.clientHeight);
         if (chartOption) {
             echart = echarts.init(chartDom.value);
-            console.log("print chart dom after");
-            console.log(chartDom.value.clientWidth, chartDom.value.clientHeight);
+            // console.log("print chart dom after");
+            // console.log(chartDom.value.clientWidth, chartDom.value.clientHeight);
             // console.log(props.stationName, chartOption);
             echart.setOption(chartOption);
         }
@@ -343,8 +343,8 @@ onMounted(async () => {
         // const echart = echarts.init(chartDom.value as HTMLElement);
         // echart.setOption(chartOption);
     }
-    console.log("print chart dom after");
-    console.log(chartDom.value.clientWidth, chartDom.value.clientHeight);
+    // console.log("print chart dom after");
+    // console.log(chartDom.value.clientWidth, chartDom.value.clientHeight);
     // console.log(res)
     // setInterval(() => {
     //     console.log("chart update", chartDom.value?.clientHeight, chartDom.value?.clientWidth);

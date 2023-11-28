@@ -141,20 +141,20 @@ const stationJson = {
                 "type": "anhui"
             }
         },
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    118.47746,
-                    31.5527
-                ]
-            },
-            "properties": {
-                "name": "当涂",
-                "type": "anhui"
-            }
-        },
+        // {
+        //     "type": "Feature",
+        //     "geometry": {
+        //         "type": "Point",
+        //         "coordinates": [
+        //             118.47746,
+        //             31.5527
+        //         ]
+        //     },
+        //     "properties": {
+        //         "name": "当涂",
+        //         "type": "anhui"
+        //     }
+        // },
         {
             "type": "Feature",
             "geometry": {
