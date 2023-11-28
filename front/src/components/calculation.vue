@@ -1,6 +1,45 @@
 <template>
   <div class="calculation">
-    <el-row class="bold-text">岸坡崩塌概率计算</el-row>
+    <el-row class="bold-text"> 岸坡崩塌概率计算</el-row>
+    <el-row style="margin: 2vh 0">
+      <el-col :span="12" class="text"> 选择配置方案： </el-col>
+      <el-col :span="12">
+        <el-select
+          ref="selectRef"
+          v-model="store.schemes[props.sectionName]"
+          @change="changeScheme"
+          placeholder="Select"
+        >
+          <el-option
+            v-for="(value, key, index) in store.configData[props.sectionName]"
+            :key="key"
+            :label="key"
+            :value="key"
+          />
+          <template #footer>
+            <el-row style="color: #444444; margin: 1.2vh 0.6vw">添加配置方案:</el-row>
+            <el-row style="color: #444444; margin: 1.5vh 0.6vw"
+              ><el-input v-model="schemeName" placeholder="输入方案名称"
+            /></el-row>
+            <el-row style="color: #444444; margin: 1.5vh 0.6vw">
+              <el-upload
+                ref="uploadRef"
+                action
+                accept=".json"
+                :auto-upload="false"
+                :on-change="upload"
+              >
+                <el-button size="small" style="width: 100%">导入JSON文件</el-button>
+              </el-upload>
+            </el-row>
+            <el-row justify="center">
+              <el-button type="primary" @click="addScheme">确认添加</el-button>
+            </el-row>
+          </template>
+        </el-select>
+      </el-col>
+    </el-row>
+    <el-divider />
     <el-row>
       <el-col :span="12" class="text"> 选择主因子： </el-col>
       <el-col :span="12" class="text">
@@ -18,7 +57,7 @@
       <el-col :span="12" class="text"> 主因子权重： </el-col>
       <el-col :span="12" class="text">
         <el-input-number
-          v-model="sectionData.weight[currentFactor]"
+          v-model="schemeData.weight[currentFactor]"
           :precision="2"
           :step="0.1"
           :max="1"
@@ -28,13 +67,13 @@
     </el-row>
     <el-row class="text"> 各次因子权重： </el-row>
     <div style="margin: 1vh 0.3vw; padding: 1vh 0.3vw" class="box-overlay">
-      <el-row v-for="(item, index) in sectionData[mainFactors[currentFactor]].weight">
+      <el-row v-for="(item, index) in schemeData[mainFactors[currentFactor]].weight">
         <el-col :span="12" class="text">
           {{ subfactors[currentFactor][index] }}：
         </el-col>
         <el-col :span="12">
           <el-input-number
-            v-model="sectionData[mainFactors[currentFactor]].weight[index]"
+            v-model="schemeData[mainFactors[currentFactor]].weight[index]"
             :precision="2"
             :step="0.1"
             :max="1"
@@ -46,7 +85,7 @@
     <el-row class="text" style="margin: 2vh 0"> 指标权重判断矩阵： </el-row>
     <div style="padding: 1vh 1vw">
       <div
-        v-for="(row, rowIndex) in sectionData[mainFactors[currentFactor]].matrix"
+        v-for="(row, rowIndex) in schemeData[mainFactors[currentFactor]].matrix"
         style="display: flex; height: 4.5vh"
       >
         <div
@@ -55,7 +94,7 @@
         >
           <el-input
             v-model.number="
-              sectionData[mainFactors[currentFactor]].matrix[rowIndex][colIndex]
+              schemeData[mainFactors[currentFactor]].matrix[rowIndex][colIndex]
             "
             type="number"
             :min="0"
@@ -73,7 +112,15 @@
       <el-button class="btn" type="danger" @click="saveConfig()">保存配置</el-button>
     </el-row>
     <el-divider />
-    <el-row class="bold-text">计算结果：</el-row>
+    <el-row align="middle">
+      <el-col :span="17" class="bold-text"> 崩塌概率计算结果： </el-col>
+      <el-col :span="7">
+        <el-button class="btn-export" @click="exportResult">
+          <el-icon :size="15"><Download /></el-icon>
+          导出
+        </el-button>
+      </el-col>
+    </el-row>
     <el-main>
       <el-row>
         <el-col :span="12" class="cell-level" :style="cellColor(0)">稳定概率</el-col>
@@ -128,6 +175,8 @@ export default defineComponent({
 <script setup>
 import { useStore } from "@/stores/index.js";
 import axios from "axios";
+import { saveAs } from "file-saver";
+import { Download } from "@element-plus/icons-vue";
 
 const store = useStore();
 
@@ -138,7 +187,13 @@ const props = defineProps({
 });
 
 //const sectionData = ref(store.configData[props.sectionName]); //如何解除sectionData与仓库的绑定？
-const sectionData = ref(store.configData[props.sectionName]);
+const bankData = ref(store.configData[props.sectionName]);
+
+const schemeData = ref(bankData.value[store.schemes[props.sectionName]]); //为什么改变schemes没有响应?
+
+function changeScheme(e) {
+  schemeData.value = bankData.value[store.schemes[props.sectionName]]; //重新赋值
+}
 
 const cellColor = computed(() => {
   return function (index) {
@@ -186,14 +241,14 @@ function reset() {
   axios.get("http://localhost:8181/matrix", { responseType: "json" }).then((res) => {
     const data = res.data.data;
     store.configData[props.sectionName] = data[props.sectionName];
-    sectionData.value = store.configData[props.sectionName]
+    schemeData.value = store.configData[props.sectionName];
   });
 }
 
 function saveConfig() {
   axios.get("http://localhost:8181/matrix", { responseType: "json" }).then((res) => {
     const data = res.data.data;
-    data[props.sectionName] = sectionData.value;
+    data[props.sectionName] = schemeData.value;
     axios
       .post("http://localhost:8181/matrix", data)
       .then(function (response) {
@@ -203,8 +258,54 @@ function saveConfig() {
         console.log(error);
       });
   });
+}
 
-  //store.configData[store.currentName] = sectionData;
+//方案添加相关逻辑
+const jsonFile = ref(null);
+const schemeName = ref("");
+const uploadRef = ref();
+const selectRef = ref();
+
+function upload(file, fileList) {
+  jsonFile.value = file;
+}
+
+// 解析JSON文件
+function addScheme() {
+  if (schemeName.value == "" || jsonFile.value == null) return;
+  let reader = new FileReader(); //新建一个FileReader
+  reader.readAsText(jsonFile.value.raw, "UTF-8"); //读取文件
+  reader.onload = (evt) => {
+    //读取文件完毕执行此函数
+    const jsonData = JSON.parse(evt.target.result);
+    store.configData[props.sectionName][schemeName.value] = jsonData;
+    store.schemes[props.sectionName] = schemeName.value;
+    schemeData.value = bankData.value[store.schemes[props.sectionName]]; //重新赋值
+    schemeName.value = "";
+    jsonFile.value = null;
+    uploadRef.value.clearFiles();
+    //selectRef.value.blur();
+  };
+}
+
+//导出结果
+function exportResult() {
+  const fileName = props.sectionName + "-计算结果.csv";
+  //let tableData = store.results[props.sectionName].unshift(props.sectionName);
+  let data = [["岸段名称", "稳定概率", "较稳定概率", "较不稳定概率", "不稳定概率"]];
+  let content = [props.sectionName].concat(store.results[props.sectionName]);
+  data.push(content);
+
+  var text = "";
+  for (var i = 0; i < data.length; i++) {
+    text += data[i].join(",") + "\n";
+  }
+
+  const blob = new Blob(["\uFEFF" + text], {
+    //加bom头
+    type: "text/plain;charset=utf-8",
+  });
+  saveAs(blob, fileName);
 }
 
 onMounted(() => {
@@ -289,5 +390,16 @@ onMounted(() => {
 
 .circle {
   font-size: calc(1.2vw + 1.2vh);
+}
+
+.btn-export {
+  height: 4.5vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: #7e8988;
+  font-size: calc(0.7vw + 0.7vh);
 }
 </style>

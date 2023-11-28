@@ -14,6 +14,12 @@ export const useStore = defineStore('config', () => {
   const currentName = ref("")
   const currentDevice = ref("")
 
+  // {
+  //   "岸段1":"默认",
+  //   ...
+  // }
+  const schemes = ref({});      //results和status的结构不改变, 而是随schemes变化, 从而不影响地图可视化
+
   const statuses = computed(()=>{
     let statusObj = {}
     for(var key in results.value) {
@@ -30,8 +36,28 @@ export const useStore = defineStore('config', () => {
     return statusObj;
   })
 
+  // function calc(name) {
+  //   let data = configData.value[name];
+  //   let w_fs = data.weight;
+
+  //   let vec_f1 = multiply(data["水动力因子"].weight, data["水动力因子"].matrix);
+  //   let vec_f2 = multiply(data["河床演变因子"].weight, data["河床演变因子"].matrix);
+  //   let vec_f3 = multiply(data["岸坡特征因子"].weight, data["岸坡特征因子"].matrix);
+  //   let vec_f4 = multiply(data["人类活动因子"].weight, data["人类活动因子"].matrix);
+  //   let totalMatrix = [vec_f1, vec_f2, vec_f3, vec_f4];
+
+  //   results.value[name] = multiply(w_fs, totalMatrix);
+  // }
+  function init() {
+    for (var bank in configData.value) {
+      schemes.value[bank] = "默认";     //可改为获取每个岸段的第一个方案
+    }
+    calcAll();
+  }
+  
   function calc(name) {
-    let data = configData.value[name];
+    // let data = configData.value[name];
+    let data = configData.value[name][schemes.value[name]];
     let w_fs = data.weight;
 
     let vec_f1 = multiply(data["水动力因子"].weight, data["水动力因子"].matrix);
@@ -44,8 +70,8 @@ export const useStore = defineStore('config', () => {
   }
 
   function calcAll() {
-    for (var key in configData.value) {
-      calc(key);
+    for (var bank in configData.value) {
+      calc(bank);
     }
   }
 
@@ -76,5 +102,5 @@ export const useStore = defineStore('config', () => {
     return newVec;
   }
 
-  return { configData, results, currentName, calcAll, calc, multiply, statuses, currentDevice };
+  return { configData, results, currentName, calcAll, calc, multiply, statuses, currentDevice, schemes, init };
 })

@@ -3,6 +3,12 @@
     <el-main>
       <div id="title">崩岸风险评估结果</div>
       <el-divider />
+      <el-row justify="end">
+        <el-button class="btn-export-all" @click="exportAllResults">
+          <el-icon :size="15" color="#7E8988"><Download /></el-icon>
+          导出结果
+        </el-button>
+      </el-row>
       <div class="section-list box-overlay">
         <el-scrollbar ref="scrollbar" always>
           <el-collapse class="collapse box-overlay" v-model="store.currentName" accordion>
@@ -32,6 +38,7 @@
           </el-collapse>
         </el-scrollbar>
       </div>
+      <el-row justify="center" style="margin: 0vh"> </el-row>
     </el-main>
   </el-container>
 </template>
@@ -39,6 +46,7 @@
 <script>
 import { defineComponent, onMounted, ref, watch, computed } from "vue";
 import calculation from "@/components/calculation.vue";
+import { Download } from "@element-plus/icons-vue";
 
 export default defineComponent({
   name: "leftBox",
@@ -79,11 +87,25 @@ watch(
   }
 );
 
-// const activeColor = computed(() => {
-//   return function (key) {
-//     return key === store.currentName ? 'yellow' : 'transparent';
-//   };
-// });
+function exportAllResults() {
+  const fileName = "岸坡崩塌概率计算结果.csv";
+  let data = [["岸段名称","稳定概率","较稳定概率","较不稳定概率","不稳定概率"]];
+  for (var key in store.results) {
+    let content = [key].concat(store.results[key]);
+    data.push(content);
+  }
+
+  var text = "";
+  for (var i = 0; i < data.length; i++) {
+    text += data[i].join(",") + "\n";
+  }
+
+  const blob = new Blob(["\uFEFF" + text], {
+    //加bom头
+    type: "text/plain;charset=utf-8",
+  });
+  saveAs(blob, fileName);
+}
 </script>
 
 <style scoped>
@@ -98,7 +120,8 @@ watch(
 
 .el-divider {
   border-color: rgb(150, 150, 150);
-  margin: 3vh 0;
+  margin-top: 3vh;
+  margin-bottom: 0;
 }
 
 #title {
@@ -120,7 +143,7 @@ watch(
 
 .section-list {
   position: relative;
-  height: 80%;
+  height: 77%;
   /* overflow: auto; */
   /* border: 1px solid #6b6b6b; */
   /* border-top: 0; */
@@ -160,5 +183,16 @@ watch(
 /* 箭头样式 */
 .el-icon {
   --color: #e8e8e8;
+}
+
+.btn-export-all {
+  height: 4.5vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: #7E8988;
+  font-size: calc(0.7vw + 0.7vh);
 }
 </style>

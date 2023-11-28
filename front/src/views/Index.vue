@@ -26,7 +26,6 @@
             ><RouterLink to="/device"
               ><span
                 class="nav-item"
-                style="margin-left: 10px"
                 :class="{ active: curIndex === 3 }"
                 >远程设备管理</span
               >

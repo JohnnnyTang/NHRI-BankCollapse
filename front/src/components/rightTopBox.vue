@@ -2,7 +2,7 @@
   <el-container class="right-top-box map-overlay">
     <el-main>
       <el-scrollbar>
-        <div id="title">历史崩岸信息</div>
+        <div id="title">历史崩岸信息查询</div>
         <el-divider />
         <el-input
           style="height: 4vh"

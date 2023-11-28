@@ -51,15 +51,6 @@ const viewState = {
 const showBox = ref(false);
 
 const statusColors = ["#0081D1", "#15C900", "#F18614", "#ED3324"];
-//点击要素后才可向组件传值并计算，无法加载后全部计算（有无更好办法？）
-/*
-var configData = null;
-const provideData = () => {
-  return {
-    configData: configData,
-  };
-};
-provide("provideData", provideData);*/
 
 function fullExtent() {
   map.easeTo({
@@ -85,12 +76,12 @@ onMounted(async () => {
   });
 
   await axios
-    .get("http://localhost:8181/matrix", { responseType: "json" })
+    .get("http://localhost:5173/resJsonEx-new.json", { responseType: "json" })
     .then((res) => {
-      const data = res.data.data;
-      //configData = data;
+      const data = res.data;
       store.configData = data;
-      store.calcAll();
+      // store.calcAll();
+      store.init();
       showBox.value = true;
     });
 
@@ -117,7 +108,6 @@ onMounted(async () => {
       .get("http://localhost:8181/monitor", { responseType: "json" })
       .then((res) => {
         deviceJson = res.data.data;
-        console.log("changed json", deviceJson)
       });
 
     let nameLists = { 0: [], 1: [], 2: [], 3: [] };
