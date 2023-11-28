@@ -240,19 +240,20 @@ function reCalc() {
 function reset() {
   axios.get("http://localhost:8181/matrix", { responseType: "json" }).then((res) => {
     const data = res.data.data;
-    store.configData[props.sectionName] = data[props.sectionName];
-    schemeData.value = store.configData[props.sectionName];
+    let scheme = store.schemes[props.sectionName];
+    store.configData[props.sectionName][scheme] = data[props.sectionName][scheme];
+    schemeData.value = store.configData[props.sectionName][scheme];
   });
 }
 
 function saveConfig() {
   axios.get("http://localhost:8181/matrix", { responseType: "json" }).then((res) => {
     const data = res.data.data;
-    data[props.sectionName] = schemeData.value;
+    data[props.sectionName][store.schemes[props.sectionName]] = schemeData.value;
     axios
       .post("http://localhost:8181/matrix", data)
       .then(function (response) {
-        console.log(response.data);
+        console.log("Saved");
       })
       .catch(function (error) {
         console.log(error);
@@ -278,13 +279,30 @@ function addScheme() {
   reader.onload = (evt) => {
     //读取文件完毕执行此函数
     const jsonData = JSON.parse(evt.target.result);
-    store.configData[props.sectionName][schemeName.value] = jsonData;
-    store.schemes[props.sectionName] = schemeName.value;
-    schemeData.value = bankData.value[store.schemes[props.sectionName]]; //重新赋值
-    schemeName.value = "";
-    jsonFile.value = null;
-    uploadRef.value.clearFiles();
-    //selectRef.value.blur();
+    axios.post("http://localhost:8181/matrixCalc", jsonData).then((res) => {
+      const newScheme = res.data.data;
+      //将新方案存入后端
+      axios.get("http://localhost:8181/matrix", { responseType: "json" }).then((res) => {
+        const data = res.data.data;
+        data[props.sectionName][schemeName.value] = newScheme;
+
+        axios
+          .post("http://localhost:8181/matrix", data)
+          .then(function (response) {
+            store.configData[props.sectionName][schemeName.value] = newScheme;
+            store.schemes[props.sectionName] = schemeName.value;
+            schemeData.value = bankData.value[schemeName.value]; //重新赋值
+            schemeName.value = "";
+            jsonFile.value = null;
+            uploadRef.value.clearFiles();
+
+            console.log("Successfully added!");
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      });
+    });
   };
 }
 

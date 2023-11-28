@@ -122,6 +122,10 @@ let option = {
   },
   yAxis: {
     type: "value",
+    nameTextStyle: {
+      //y轴上方单位的颜色
+      color: "#C0D0FF",
+    },
     axisLabel: {
       formatter: function (value) {
         // 如果值为正数，就在前面加上+号
@@ -156,6 +160,8 @@ const chartDom = ref();
 
 let chart = ref(null);
 
+let units = { GNSS: "mm", 压力计: "Kpa", 应变桩: "Mpa" };
+
 watch(
   () => store.currentDevice,
   (newValue, oldValue) => {
@@ -165,6 +171,7 @@ watch(
       option.title.text = newValue + "—48小时点位变化情况";
       option.series[0].data = positionData[newValue].xPos;
       option.series[1].data = positionData[newValue].yPos;
+      option.yAxis.name = units[positionData[newValue].type];
       chart.setOption(option);
     }
   }
@@ -176,16 +183,19 @@ onMounted(() => {
 
   axios.get("http://localhost:8181/monitor", { responseType: "json" }).then((res) => {
     let data = res.data.data;
-    for(var key in data.features) {
+    for (var key in data.features) {
       let feature = data.features[key];
       let name = feature.properties.name;
-      
+
       positionData[name] = {};
-      positionData[name].xPos = randomData(48, -0.3, 0.3);
-      positionData[name].yPos = randomData(48, -0.3, 0.3);
+      positionData[name].type = feature.properties.type;
+
+      let variationRange = positionData[name].type === "GNSS" ? 0.5 : 0.02;
+      positionData[name].xPos = randomData(48, variationRange);
+      positionData[name].yPos = randomData(48, variationRange);
     }
-    console.log(positionData)
-  })
+    console.log(positionData);
+  });
 
   chart = echarts.init(chartDom.value);
   chart.setOption(option);

@@ -6,6 +6,9 @@ import MatrixService from './app/service/matrix.service.js';
 import MonitorService from './app/service/monitor.service.js';
 import WaterService from './app/service/water.service.js';
 import StationService from './app/service/station.service.js';
+import MatrixModel from './app/models/matrix.model.js';
+import gnssData from './app/models/gnss.model.js';
+import gnssService from './app/service/gnss.service.js';
 
 const app = express();
 
@@ -120,6 +123,39 @@ app.get("/stations", async (req, res) => {
         message: "success"
     });
 });
+
+app.post("/matrixCalc", (req, res) => {
+    try {
+        const resData = MatrixModel.GernerateMatrixFromRequest(req.body);
+        res.status(200).send({
+            status: 200,
+            data: resData, 
+            message: "success"
+        })
+    } catch(error) {
+        res.status(500).send({
+            status: 500,
+            data: null,
+            message: error
+        })
+    }
+});
+
+app.get("/gnss", (req, res) => {
+    res.status(200).send({
+        status: 200,
+        data: gnssService.getGnssData(),
+        message: "success"
+    })
+})
+
+app.get("/gnss/statistic", (req, res) => {
+    res.status(200).send({
+        status: 200,
+        data: gnssService.getGnssStatistic(),
+        message: "success"
+    })
+})
 
 // 设置监听端口
 const PORT = process.env.PORT || 8181;

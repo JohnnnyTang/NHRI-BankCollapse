@@ -19,7 +19,7 @@ const router = createRouter({
         {path: '', name: 'index', component: homeView},
         {path: '/home', name: 'home', component: homeView},
         {path: '/statistics', name:'statistics', component: waterForecastWrapper},
-        {path: '/device', name:'device', component: deviceViewWrapper}
+        {path: '/device', name:'device', component: deviceViewWrapper},
       ]
     }
   ]

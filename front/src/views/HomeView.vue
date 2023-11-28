@@ -76,9 +76,10 @@ onMounted(async () => {
   });
 
   await axios
-    .get("http://localhost:5173/resJsonEx-new.json", { responseType: "json" })
+    .get("http://localhost:8181/matrix", { responseType: "json" })
     .then((res) => {
-      const data = res.data;
+      const data = res.data.data;
+      console.log(data)
       store.configData = data;
       // store.calcAll();
       store.init();

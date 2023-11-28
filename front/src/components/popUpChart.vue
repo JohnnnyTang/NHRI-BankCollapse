@@ -15,6 +15,9 @@
         </div>
         <div class="echart-container" v-show="chartShown" ref="chartDom"
             :style="{ width: chartWidth + 'px', height: chartHeight + 'px' }">无数据</div>
+        <div class="log-button" v-show="chartShown">
+            <div class="log-button-text" @click="generateDataLog">统计报表</div>
+        </div>
     </div>
 </template>
   
@@ -68,7 +71,6 @@ const chartDom = ref();
 const curTime = new Date();
 let curTimeStrRef = ref(curTime.getHours() + ':' + curTime.getMinutes());
 
-
 // type StringKeyNumArray = {
 //     [key: string]: number[][]
 // }
@@ -81,8 +83,12 @@ const nameMap = {
     'downstreamWaterLevel': '下游水位',
     'waterLevel': '水位'
 }
+let logText = props.stationName + "水位监测数据统计报表\n";
+logText += (props.ysdTime + "——" + props.curTime + "\n");
+// console.log(logText)
 const visualMapColors = [['#6F04D9', '#05C7F2'], ['#F24638', '#F3A950']]
 const buildData2ChartOption = (reqData, dataKeys) => {
+    console.log("buildData2ChartOption", reqData)
     const dataSeries = [];
     const seriesData = {};
     let minMax = {};
@@ -90,14 +96,23 @@ const buildData2ChartOption = (reqData, dataKeys) => {
         seriesData[dataKey] = [];
         minMax[dataKey] = [reqData[0][dataKey], reqData[0][dataKey]]
     }
+    let logDataText = "监测数据：\n";
     for (let dataItem of reqData) {
+        logDataText += (dataItem["time"] + ", ");
         const dataTime = Date.parse(dataItem["time"].replace(' ', 'T'))
         for (let dataKey of dataKeys) {
+            logDataText += (nameMap[dataKey] + ": " + dataItem[dataKey] + ", ");
             seriesData[dataKey].push([dataTime, dataItem[dataKey]]);
             minMax[dataKey][0] = minMax[dataKey][0] <= dataItem[dataKey] ? minMax[dataKey][0] : dataItem[dataKey];
             minMax[dataKey][1] = minMax[dataKey][1] >= dataItem[dataKey] ? minMax[dataKey][1] : dataItem[dataKey];
         }
+        logDataText += "\n";
     }
+    for (let dataKey of dataKeys) {
+        logText += (nameMap[dataKey] + "最小值: " + minMax[dataKey][0] + ", 最大值: " + minMax[dataKey][1] + "\n");
+    }
+    logText += logDataText;
+    // console.log(logText);
     const visualMaps = [];
     let i = 0;
     let seriesIndex = 0;
@@ -243,6 +258,11 @@ const buildData2ChartOption = (reqData, dataKeys) => {
     return chartOption;
 }
 
+const generateDataLog = () => {
+    const strData = new Blob([logText], { type: 'text/plain;charset=utf-8' });
+    saveAs(strData, 'dataLog.txt');
+}
+
 let chartOption = null;
 
 let chartShown = ref(false);
@@ -288,7 +308,7 @@ onMounted(async () => {
 
     // console.log("test");
     const res = (await getWaterLevelByStationAndTime(props.stationType, props.stationName, props.ysdTime, props.curTime)).data;
-    console.log('res', res)
+    // console.log('res', res)
     if (res.length == 0) {
         // console.log(props);
         curTimeStrRef.value = '无数据';
@@ -393,6 +413,39 @@ div.tide-chart-container {
         // background-color: brown;
         width: 100%;
         height: 100%;
+    }
+
+    div.log-button {
+        position: absolute;
+        top: 2%;
+        right: 5%;
+        width: 14%;
+        height: 8%;
+        text-align: center;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background-color: rgb(211, 232, 251);
+
+        border-radius: 6px;
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+            cursor: pointer;
+            width: 13%;
+            height: 7.5%;
+            transition: all 0.3s ease-in-out;
+        }
+
+        div.log-button-text {
+            font-weight: 600;
+
+            &:hover {
+                color: rgb(37, 59, 107);
+            }
+        }
     }
 }
 </style>
