@@ -7,6 +7,7 @@
       v-show="false"
       :key="index"
     ></div>
+    <div id="gnssPopChart" v-show="false"></div>
     <div id="container"></div>
     <div class="legend" v-show="!chartInited">
       <div class="legend-sub legend-one">
@@ -29,6 +30,29 @@ import {
 } from "vue";
 import axios from "axios";
 import popUpChart from '../components/popUpChart.vue';
+import gnssChart from "../components/gnssChart.vue";
+
+const gnssStationGeoJson = {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "金河口GNSS监测站",
+        "type": "GNSSBase",
+        "bank": "金河口",
+        "status": 1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          118.410947,
+          31.71551
+        ]
+      }
+    }
+  ]
+}
 // import LoginView from "./LoginView.vue";
 
 function formatDate(value) {
@@ -49,15 +73,22 @@ function formatDate(value) {
     var t = y + '-' + m + '-' + d + ' ' + h + ':' + i + ':' + s;
     return t;
 }
-
+// 118.424947,31.71951
 const popUpChartsPropRefs = {};
-
-// const pop = new mapboxgl.Popup({ maxWidth: "400px" });
-// pop.addClassName("pop-up");
 
 let popUpChartsApps = new Map();
 let popUpChartsAppIns = new Map();
 let popUpMap = new Map();
+
+const gnssChartPropsRef = {
+  show: ref(true),
+  chartWidth: ref(100),
+  chartHeight: ref(60),
+};
+
+let gnssChartApp = null;
+let gnssChartAppIns = null;
+let gnssChartItem = null;
 
 
 const getRegionTideStation = async () => {
@@ -224,7 +255,117 @@ const initStationsLayer = (map) => {
       .addTo(map);
     popUpMap.set(aStation.properties.name, popChart);
   }
-  console.log('send props',popUpChartsPropRefs)
+  // console.log('send props',popUpChartsPropRefs);
+
+  // gnss chart part
+  map.addSource("gnssStation", {
+    type: "geojson",
+    data: gnssStationGeoJson,
+  });
+  map.loadImage("/monitor.png", (error, image) => {
+    if (error) throw error;
+
+    map.addImage("gnssMonitor", image);
+
+    map.addLayer({
+      id: "gnss-icon",
+      type: "symbol",
+      source: "gnssStation",
+      layout: {
+        "icon-image": "gnssMonitor",
+        "icon-size": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          0,
+          0.04,
+          5,
+          0.085,
+          10,
+          0.628,
+          22,
+          1,
+        ],
+        "icon-allow-overlap": true,
+      },
+    });
+
+    map.addLayer({
+      id: "gnss-label",
+      type: "symbol",
+      source: "gnssStation",
+      layout: {
+        "text-field": ["format", ["get", "name"], { "font-scale": 0.8 }],
+        "text-anchor": "bottom",
+        "text-offset": [
+          0, 3.5
+        ],
+        "text-size": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          2,
+          0,
+          5,
+          10,
+          10,
+          18,
+          22,
+          56,
+        ],
+        "text-font": ["Open Sans Bold"],
+      },
+      paint: {
+        "text-color": "#ebe5ff",
+        "text-halo-color": "#f0800f",
+        "text-halo-width": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          1,
+          0,
+          5,
+          0.2,
+          9,
+          0.1,
+          10,
+          0.5,
+          22,
+          1,
+        ],
+        "text-halo-blur": 0.3,
+      },
+    });
+
+    map.on("mouseenter", "gnss-icon", () => {
+      map.getCanvas().style.cursor = "pointer";
+    });
+    map.on("mouseleave", "gnss-icon", () => {
+      map.getCanvas().style.cursor = "";
+    });
+
+    map.on("click", "gnss-icon", (e) => {
+      map.flyTo({
+        zoom: 12.6,
+        center: e.lngLat,
+        essential: true,
+      });
+    });
+  });
+  gnssChartApp = createApp(gnssChart, gnssChartPropsRef);
+  gnssChartAppIns = gnssChartApp.mount("#gnssPopChart");
+  let gnssPopChart = new mapboxgl.Popup({
+    maxWidth: "1000px",
+    closeOnClick: false,
+    offset: popupOffsets,
+  });
+  gnssPopChart.addClassName("pop-chart");
+  gnssPopChart
+      .setLngLat(gnssStationGeoJson.features[0].geometry.coordinates)
+      .setDOMContent(gnssChartAppIns.$el)
+      .addTo(map);
+  gnssChartItem = gnssPopChart;
+
 
   map.on("zoom", (e) => {
     const zoom = map.getZoom();
@@ -235,11 +376,17 @@ const initStationsLayer = (map) => {
           popUp.remove();
         }
       }
+      if(gnssChartItem.isOpen()) {
+        gnssChartItem.remove();
+      }
     } else {
       for (let popUp of popUpMap.values()) {
         if (!popUp.isOpen()) {
           popUp.addTo(map);
         }
+      }
+      if(!gnssChartItem.isOpen()) {
+        gnssChartItem.addTo(map);
       }
       if (zoom < 10) {
         for (let station of regionStationGeojson.features) {
@@ -247,6 +394,8 @@ const initStationsLayer = (map) => {
           popUpChartsPropRefs[station.properties.name].chartHeight.value = zoom * 6;
           // console.log(zoom, popUpChartsPropRefs[station.name].chartWidth.value)
         }
+        gnssChartPropsRef.chartWidth.value = zoom * 10;
+        gnssChartPropsRef.chartHeight.value = zoom * 6;
         if (
           chartInited.value &&
           popUpChartsPropRefs[regionStationGeojson.features[0].properties.name].chartWidth.value < 240
@@ -255,6 +404,7 @@ const initStationsLayer = (map) => {
           for (let station of regionStationGeojson.features) {
             popUpChartsAppIns.get(station.properties.name).toggleChartStatus();
           }
+          gnssChartAppIns.toggleChartStatus();
           chartInited.value = false;
         }
       } else if (zoom < 12) {
@@ -263,6 +413,8 @@ const initStationsLayer = (map) => {
           popUpChartsPropRefs[station.properties.name].chartHeight.value = zoom * 16;
           // console.log(zoom, popUpChartsPropRefs[station.name].chartWidth.value)
         }
+        gnssChartPropsRef.chartWidth.value = zoom * 24;
+        gnssChartPropsRef.chartHeight.value = zoom * 16;
         if (
           chartInited.value &&
           popUpChartsPropRefs[regionStationGeojson.features[0].properties.name].chartWidth.value < 240
@@ -272,6 +424,7 @@ const initStationsLayer = (map) => {
           for (let station of regionStationGeojson.features) {
             popUpChartsAppIns.get(station.properties.name).toggleChartStatus();
           }
+          gnssChartAppIns.toggleChartStatus();
           chartInited.value = false;
         } else if (
           !chartInited.value &&
@@ -280,6 +433,7 @@ const initStationsLayer = (map) => {
           for (let station of regionStationGeojson.features) {
             popUpChartsAppIns.get(station.properties.name).toggleChartStatus();
           }
+          gnssChartAppIns.toggleChartStatus();
           chartInited.value = true;
         }
       } else {
@@ -288,10 +442,13 @@ const initStationsLayer = (map) => {
           popUpChartsPropRefs[station.properties.name].chartHeight.value = zoom * 28;
           // console.log(zoom, popUpChartsPropRefs[station.name].chartWidth.value)
         }
+        gnssChartPropsRef.chartWidth.value = zoom * 42;
+        gnssChartPropsRef.chartHeight.value = zoom * 28;
         if (!chartInited.value) {
           for (let station of regionStationGeojson.features) {
             popUpChartsAppIns.get(station.properties.name).toggleChartStatus();
           }
+          gnssChartAppIns.toggleChartStatus();
           chartInited.value = true;
         }
       }
@@ -300,9 +457,13 @@ const initStationsLayer = (map) => {
       for (let station of regionStationGeojson.features) {
         popUpChartsAppIns.get(station.properties.name).resizeEchart();
       }
+      gnssChartAppIns.resizeEchart();
     }
   });
   // console.log(popUpChartsAppIns);
+
+  // add gnss station
+  
 };
 
 
@@ -311,14 +472,14 @@ onMounted(async () => {
     container: "container",
     style: "mapbox://styles/johnnyt/clld6armr00f901q0dyqh7452",
     center: [120.001, 31.8813],
-    zoom: 9.05,
+    zoom: 8.75,
     accessToken:
       "pk.eyJ1Ijoiam9obm55dCIsImEiOiJja2xxNXplNjYwNnhzMm5uYTJtdHVlbTByIn0.f1GfZbFLWjiEayI6hb_Qvg",
   });
   zoomOut = () => {
     map.flyTo({
       center: [120.001, 31.8813],
-      zoom: 9.05,
+      zoom: 8.75,
       essential: true,
     });
   };
