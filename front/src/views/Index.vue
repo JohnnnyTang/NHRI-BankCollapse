@@ -15,7 +15,7 @@
           <el-col :span="2"
             ><RouterLink to="/device"><span class="nav-item" :class="{ active: curIndex === 3 }">远程设备管理</span> </RouterLink></el-col
           >
-          <el-col :span="2"><span class="nav-item analyse" :class="{ active: curIndex === 3 }" @click="analyseClick">河床分析</span> </el-col>
+          <el-col :span="2"><span class="nav-item analyse" :class="{ active: curIndex === 4 }" @click="analyseClick">河床分析</span> </el-col>
         </el-row>
       </el-header>
       <el-main>

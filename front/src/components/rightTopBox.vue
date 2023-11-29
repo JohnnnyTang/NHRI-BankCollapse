@@ -34,21 +34,26 @@
             v-if="showTable"
             :data="tables"
             :cell-style="{
-              background: '#5B637C',
-              color: '#D8E0FA',
+              background: '#042B56',
+              color: '#DFFBFC',
+              fontSize: 'calc(0.5vw + 0.4vh)',
               borderColor: '#B7B7B7',
               padding: '0.1vh 0.1vw',
+              textAlign: 'center'
             }"
             :header-cell-style="{
-              background: '#333E52',
+              background: '#293241',
               color: '#D8E0FA',
+              fontSize: 'calc(0.5vw + 0.4vh)',
               borderColor: '#B7B7B7',
               padding: '0.1vh 0.1vw',
+              textAlign: 'center'
             }"
-            height="29vh"
+            height="33.5vh"
             class="style-table box-overlay"
             border
             stripe
+            :fit="true"
           >
             <el-table-column prop="时间" label="时间" width="84" />
             <el-table-column prop="县（市、区）" label="县(市、区)" width="85" />
