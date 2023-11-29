@@ -11,8 +11,21 @@ export const useStore = defineStore('config', () => {
   //   ...
   // }
   const results = ref({});
-  const currentName = ref("")
-  const currentDevice = ref("")
+  const currentName = ref("");
+
+  const currentType = computed(()=>{
+    let bankNames = []
+    for (var key in configData.value) {
+      bankNames.push(key);
+    }
+    if(currentName.value === "") {
+      return "empty";
+    } else if(bankNames.indexOf(currentName.value)!=-1){
+      return "bank";
+    } else {
+      return "device"
+    }
+  })
 
   // {
   //   "岸段1":"默认",
@@ -102,5 +115,5 @@ export const useStore = defineStore('config', () => {
     return newVec;
   }
 
-  return { configData, results, currentName, calcAll, calc, multiply, statuses, currentDevice, schemes, init };
+  return { configData, results, currentName, currentType, calcAll, calc, multiply, statuses, schemes, init };
 })

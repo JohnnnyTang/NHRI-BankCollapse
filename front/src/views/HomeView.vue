@@ -16,7 +16,7 @@ import leftBox from "@/components/leftBox.vue";
 import rightTopBox from "@/components/rightTopBox.vue";
 import rightBottomBox from "@/components/rightBottomBox.vue";
 
-import { defineComponent, onMounted, ref, watch } from "vue";
+import { defineComponent, onMounted, ref, watch, onBeforeUnmount } from "vue";
 import { FullScreen } from "@element-plus/icons-vue";
 
 export default defineComponent({
@@ -79,7 +79,6 @@ onMounted(async () => {
     .get("http://localhost:8181/matrix", { responseType: "json" })
     .then((res) => {
       const data = res.data.data;
-      console.log(data)
       store.configData = data;
       // store.calcAll();
       store.init();
@@ -238,7 +237,6 @@ onMounted(async () => {
           22,
           1,
         ],
-        
       },
     });
 
@@ -253,7 +251,7 @@ onMounted(async () => {
         "text-offset": [0, 1.5],
         "text-letter-spacing": 0.1,
         "text-max-width": 11,
-        "text-allow-overlap": true
+        "text-allow-overlap": true,
       },
       paint: {
         "text-color": "#ebe5ff",
@@ -280,22 +278,10 @@ onMounted(async () => {
 
     map.on("click", function (event) {
       const states = map.queryRenderedFeatures(event.point, {
-        layers: ["lineLayer", "pointLayer"],
+        layers: ["lineLayer", "pointLayer", "deviceLayer"],
       });
       if (states.length) {
         store.currentName = states[0].properties.name;
-      } else {
-        store.currentName = "";
-      }
-    });
-
-    map.on("click", function (event) {
-      const states = map.queryRenderedFeatures(event.point, {
-        layers: ["deviceLayer"],
-      });
-      if (states.length && store.currentName == "") {
-        //防止同时选取monitor和device图层
-        store.currentDevice = states[0].properties.name;
         //漫游
         let coordinates = event.lngLat;
         map.easeTo({
@@ -304,7 +290,7 @@ onMounted(async () => {
           duration: 1500,
         });
       } else {
-        store.currentDevice = "";
+        store.currentName = "";
       }
     });
 
@@ -330,11 +316,7 @@ onMounted(async () => {
     watch(
       () => store.currentName,
       (newValue, oldValue) => {
-        if (newValue === "") {
-          map.setPaintProperty("pointLayer", "circle-stroke-width", 2);
-          animePoint.clearPoint();
-        } else {
-          store.currentDevice = "";
+        if (store.currentType == "bank") {
           map.setPaintProperty("pointLayer", "circle-stroke-width", [
             "match", //匹配模式
             ["get", "name"], //匹配的属性值名称，id，可以从feature的属性得到
@@ -357,6 +339,9 @@ onMounted(async () => {
               break;
             }
           }
+        } else {
+          map.setPaintProperty("pointLayer", "circle-stroke-width", 2);
+          animePoint.clearPoint();
         }
       }
     );
@@ -399,6 +384,10 @@ onMounted(async () => {
       }
     );
   });
+});
+
+onBeforeUnmount(() => {
+  store.currentName = "";
 });
 </script>
 

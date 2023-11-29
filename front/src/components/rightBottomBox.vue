@@ -1,22 +1,20 @@
 <template>
   <el-container class="right-bottom-box map-overlay">
     <el-main>
-      <div v-if="store.currentName != ''"><bankInfo /></div>
+      <div v-show="store.currentType == 'bank'"><bankInfo /></div>
       <div
-        v-show="store.currentDevice != ''"
+        v-show="store.currentType == 'device'"
         ref="chartDom"
         style="position: relative; width: 100%; height: 100%"
       ></div>
-      <div v-show="store.currentName == '' && store.currentDevice == ''" class="no-data">
-        无数据
-      </div>
+      <div v-show="store.currentType == 'empty'" class="no-data">无数据</div>
     </el-main>
   </el-container>
 </template>
 
 <script>
 import bankInfo from "@/components/bankInfo.vue";
-import { defineComponent, onMounted, ref, onUpdated, watch } from "vue";
+import { defineComponent, onMounted, ref, onUpdated, watch, onBeforeUnmount } from "vue";
 import * as echarts from "echarts";
 import randomData from "@/utils/random.js";
 
@@ -162,9 +160,9 @@ let chart = ref(null);
 let units = { GNSS: "mm", 压力计: "Kpa", 应变桩: "Mpa" };
 
 watch(
-  () => store.currentDevice,
+  () => store.currentName,
   (newValue, oldValue) => {
-    if (newValue) {
+    if (store.currentType == "device") {
       // chartDom.value.style.height = chartDom.value.parentNode.clientHeight + "px";
       // chartDom.value.style.width = chartDom.value.parentNode.clientWidth + "px";
       option.title.text = newValue + "—48小时变化情况";
@@ -224,11 +222,14 @@ onMounted(() => {
         positionData[name].value = randomData(48, 0.02);
       }
     }
-    console.log(positionData);
   });
 
   chart = echarts.init(chartDom.value);
   chart.setOption(option);
+});
+
+onBeforeUnmount(() => {
+  chart.dispose();
 });
 </script>
 
